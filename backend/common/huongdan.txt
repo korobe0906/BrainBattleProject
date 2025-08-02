@@ -1,2 +1,0 @@
-pipes, helpers, guards, decorators, interceptors 
-không chứa: enums, dto, types, constants>shared

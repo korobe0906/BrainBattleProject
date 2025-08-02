@@ -1,0 +1,19 @@
+- ORM layer, schema.prisma
+- thông tin:
+Thuật ngữ	Nghĩa
+CRUD	    4 thao tác cơ bản: Tạo, Đọc, Sửa, Xóa
+Model	    Đại diện cho bảng dữ liệu trong code
+Generate    model	Tự tạo code model từ file schema
+ORM	    Công cụ kết nối code và database (Prisma là 1 ORM)
+- Không cần viết SQL
+- Tự generate model
+- Dễ viết API CRUD
+- Hướng dẫn tạo prisma:
+1. npx prisma init	:
+	npm install prisma --save-dev
+	npx prisma init
+2. Cấu hình DATABASE_URL trong .env
+3. Viết model trong .prisma	
+4. npx prisma generate	
+5. Tạo prisma.service.ts	
+6. Sửa import đường dẫn đúng	

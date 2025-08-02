@@ -51,3 +51,4 @@ logs/
 # === TEST OUTPUT ===
 test-output/
 coverage/
+node_modules
