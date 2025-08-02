@@ -1,0 +1,17 @@
+Chức năng dùng cho Web Admin
+Module		Chức năng cụ thể
+admin		Quản trị hệ thống, xem dashboard, thống kê
+users		Xem/sửa tài khoản người dùng
+roles		Gán vai trò người dùng (Admin – Creator – Learner)
+notification	Gửi thông báo hệ thống đến người dùng
+report		Xem và xử lý các report được gửi từ Learner
+auth		Dùng cho đăng nhập web admin (admin login)
+
+Chức năng dùng chung hoặc API chung
+Module		Ghi chú
+users		Learner cũng cần xem/sửa profile, nhưng admin có quyền cao hơn
+notification	Learner chỉ được xem, còn admin có thể gửi
+report		Learner gửi report, admin xử lý
+auth		Mỗi nhóm người dùng đều cần đăng nhập – bạn có thể phân quyền trong 		login response hoặc guard
+
+
