@@ -1,0 +1,10 @@
+admin/auth:
+Đăng ký (Signup)
+
+Đăng nhập (Login)
+
+JWT
+
+Phân quyền bằng roles
+
+Lưu refresh token 
