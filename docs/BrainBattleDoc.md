@@ -45,8 +45,9 @@ Docker, GitHub Actions, Monorepo project structure
 
 III. 📁 Repository Structure
 
+plaintext
 BrainBattleProject/
-├── backend/                  # NestJS API
+├── nestjs/                  # NestJS API
 │   ├── src/
 │   ├── modules/
 │   ├── core/
@@ -57,18 +58,18 @@ BrainBattleProject/
 │   └── ...
 ├── mobile-app/              # Flutter app
 │   └── ...
-├── web-admin/               # Next.js admin dashboard
+├── web-admin/               # Next.js admin site
 │   └── ...
 ├── web-client/              # Next.js user site
 │   └── ...
-├── ai-service/              # AI modules (Python or TypeScript)
+├── ai-service/              # AI module (Python or TS)
 │   └── ...
-├── shared/                  # Shared resources (types, schemas)
+├── shared/                  # Tài nguyên dùng chung (type, schema)
 │   └── ...
-├── docs/                    # Project documentation & architecture
+├── docs/                    # Tài liệu dự án, sơ đồ kiến trúc
 │   └── overview.md
 ├── .github/
-│   └── workflows/           # GitHub Actions for CI/CD
+│   └── workflows/           # GitHub Actions (CI/CD)
 │       └── deploy.yml
 ├── .gitignore
 ├── docker-compose.yml
