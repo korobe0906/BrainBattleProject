@@ -44,9 +44,7 @@ DevOps:
 Docker, GitHub Actions, Monorepo project structure
 
 III. 📁 Repository Structure
-plaintext
-Copy
-Edit
+
 BrainBattleProject/
 ├── backend/                  # NestJS API
 │   ├── src/
