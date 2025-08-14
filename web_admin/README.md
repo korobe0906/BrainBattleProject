@@ -1,36 +1,85 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# BrainBattle – Admin Web (Next.js)
+
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app). Stack: App Router, TypeScript, TailwindCSS.
+
+## Requirements
+- Node.js **>= 18.17** (khuyến nghị 20.x LTS)
+- NPM/Yarn/PNPM/Bun (dùng NPM mặc định)
 
 ## Getting Started
 
-First, run the development server:
-
+### 1) Clone & vào đúng thư mục
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/korobe0906/BrainBattleProject.git
+cd BrainBattleProject/web_admin
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2) Cài dependencies
+```bash
+# cài deps từ package.json
+npm i
+# đảm bảo các lib UI có mặt (nếu chưa có trong package.json)
+npm i gsap lucide-react clsx tailwind-merge
+# (tuỳ chọn theo code bạn dùng)
+npm i @tanstack/react-table @radix-ui/react-dropdown-menu @radix-ui/react-dialog
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3) Tạo biến môi trường (dev)
+Tạo file .env.local (không commit):
+```bash
+# ví dụ dành cho DEV — không dùng cho production
+ADMIN_EMAIL=admin@brainbattle.app
+ADMIN_PASSWORD=admin123
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 4) Chạy development server
+```bash
+npm run dev
+# or: yarn dev / pnpm dev / bun dev
+```
+Mở http://localhost:3000 để xem kết quả.
+Bạn có thể bắt đầu chỉnh ở src/app/page.tsx hoặc các route trong src/app/.... Hot reload bật sẵn.
+VD: http://localhost:3000/sign-in
+
+## Script
+```bash
+npm run dev     # chạy dev
+npm run build   # build production
+npm run start   # chạy bản build đã build
+npm run lint    # lint code
+```
+
+## Project Structure (tóm tắt)
+```bash
+web_admin/
+├─ public/images/              # asset tĩnh; có .gitkeep
+├─ src/
+│  ├─ app/
+│  │  ├─ sign-in/              # trang đăng nhập + GSAP
+│  │  └─ admin/                # khu admin (overview, learners…)
+│  ├─ components/              # header, sidebar, dashboard, learners, auth
+│  ├─ lib/                     # utils (cn), types (user)
+│  └─ styles/                  # globals.css (nếu tách)
+├─ package.json  tsconfig.json  tailwind.config.ts  postcss.config.mjs  next.config.*
+└─ .gitignore
+```
+## Notes
+  - Import alias: @/* → trỏ src/* (cấu hình trong tsconfig.json).
+  - Helper cn(...): dùng clsx + tailwind-merge trong src/lib/utils.ts.
+  - GSAP chạy phía client: thêm 'use client' và gọi trong useEffect.
+  - Không commit .env*; nếu cần, cung cấp .env.example.
 
 ## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
+  - Next.js Documentation – tính năng & API.
+  - Learn Next.js – tutorial tương tác.
+  - Next.js GitHub – issues/PRs welcome.
+  
 ## Deploy on Vercel
+Cách nhanh nhất là deploy trên Vercel.
+Monorepo tip:
+  - Root Directory: web_admin
+  - Framework Preset: Next.js
+  - Build/Output để mặc định.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
