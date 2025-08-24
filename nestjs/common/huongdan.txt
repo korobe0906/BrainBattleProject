@@ -1,6 +1,0 @@
-pipes, helpers, guards, decorators, interceptors 
-không chứa: enums, dto, types, constants>shared
-@UseGuards(JwtGuard, RolesGuard)
-@Roles('ADMIN')
-@Get('users')
-getAllUsers() { ... }
