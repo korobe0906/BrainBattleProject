@@ -29,6 +29,8 @@ Backend:
   
   Socket.io (Real-time Quiz Battles)
 
+  Nestjs
+
 AI:
 
   OpenAI API, Retrieval-Augmented Generation (RAG), Ontology Mapping
