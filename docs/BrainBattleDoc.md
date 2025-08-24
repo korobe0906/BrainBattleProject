@@ -1,91 +1,79 @@
-# 📚 BrainBattle – Dự án Học Ngoại Ngữ Gamified
+📚 BrainBattle – Gamified Language Learning Platform
+I. 🎯 Introduction
+BrainBattle is an innovative language learning platform that combines:
 
----
+🌐 TikTok-style nonlinear learning experience
 
-## I. 🎯 Giới thiệu
+🧠 Personalized linear learning paths based on AIM (Atomic Instructional Modules)
 
-**BrainBattle** là một nền tảng học ngoại ngữ sáng tạo, kết hợp:
-- 🌐 Trải nghiệm TikTok-style học phi tuyến tính
-- 🧠 Học tuyến tính theo lộ trình AIM cá nhân hóa
-- 🎮 Cơ chế chiến đấu kiến thức kiểu MOBA 1v1 / 5v5
-- 🤖 Tích hợp AI (GPT + RAG), Blockchain (NFT), Camera/LiDAR
+🎮 MOBA-style knowledge battles (1v1 / 5v5)
 
-Dự án áp dụng mô hình microservice để dễ mở rộng, phát triển linh hoạt và scale production.
+🤖 Integration with AI (GPT + RAG), Blockchain (NFT), and Camera/LiDAR
 
----
+The project is built on a microservice architecture, enabling scalability, modular development, and smooth production deployment.
 
-## II. 🏗 Kiến trúc hệ thống
+II. 🏗 System Architecture
+Frontend:
 
-- **Frontend**:
-  - `Flutter` (Mobile)
-  - `Next.js` (Web Client, Web Admin, App)
-- **Backend**:
-  - `Supabase` (Auth + DB + Realtime)
-  - `FastAPI` (Business logic, AI Service)
-  - `Socket.io` (Quiz Battle Realtime)
-- **AI**:
-  - `OpenAI API`, `RAG`, `Ontology Mapping`
-- **Blockchain**:
-  - `Polygon Mumbai Testnet`, `MetaMask`, `NFT Certificate`
-- **Media**:
-  - `Firebase Storage` (video/livestream)
-- **DevOps**:
-  - `Docker`, `GitHub Actions`, `Monorepo`
+Flutter (Mobile App)
 
----
+Next.js (Web Client, Web Admin, Main App)
 
-## III. 📁 Cấu trúc repo
+Backend:
 
-```plaintext
-BrainBattleProject/
-├── backend/                  # NestJS API
-│   ├── src/
-│   ├── modules/
-│   ├── core/
-│   ├── config/
-│   ├── gateway/
-│   ├── main.ts
-│   ├── app.module.ts
-│   └── ...
-├── mobile-app/              # Flutter app
-│   └── ...
-├── web-admin/               # Next.js admin site
-│   └── ...
-├── web-client/              # Next.js user site
-│   └── ...
-├── ai-service/              # AI module (Python or TS)
-│   └── ...
-├── shared/                  # Tài nguyên dùng chung (type, schema)
-│   └── ...
-├── docs/                    # Tài liệu dự án, sơ đồ kiến trúc
-│   └── overview.md
-├── .github/
-│   └── workflows/           # GitHub Actions (CI/CD)
-│       └── deploy.yml
-├── .gitignore
-├── docker-compose.yml
-├── README.md
-└── LICENSE
+Supabase (Authentication, Database, Realtime)
 
-IV. ⚙️ Thiết lập local development
-1. Clone repo & khởi chạy
+FastAPI (Business Logic, AI Services)
+
+Socket.io (Real-time Quiz Battles)
+
+AI:
+
+OpenAI API, Retrieval-Augmented Generation (RAG), Ontology Mapping
+
+Blockchain:
+
+Polygon Mumbai Testnet, MetaMask, NFT-based Certificates
+
+Media:
+
+Firebase Storage (Video and Livestream Content)
+
+DevOps:
+
+Docker, GitHub Actions, Monorepo project structure
+
+III. 📁 Repository Structure
+
+IV. ⚙️ Local Development Setup
+Clone the repository and run:
 git clone https://github.com/korobe0906/BrainBattleProject.git
 
-V. Vai trò:
-Thành viên	Vai trò
-@PhamThiKieuDiem	Leader 
-@NguyenTruongNgocHan 
+V. 🧑‍💻 Team Members
+Member	Role
+@PhamThiKieuDiem	Leader
+@NguyenTruongNgocHan	
 
-VI Quy ước:
-Tên nhánh: feature/battle-quiz, fix/video-stream, ai/rag-pipeline
+VI. 🚧 Development Guidelines
+Branch Naming Conventions:
 
-PR yêu cầu 1 reviewer → mới được merge
+feature/battle-quiz
 
-Gắn task vào Kanban
+fix/video-stream
 
-VII. 📬 Liên hệ nhóm phát triển
+ai/rag-pipeline
+
+Pull Request Rules:
+
+Each PR must be reviewed by at least one reviewer before merging
+
+Task Management:
+
+All work should be linked to tasks on the Kanban board
+
+VII. 📬 Contact the Development Team
 📧 Email: laptrinh0906.@gmail.com
 
-🌐 Fanpage: https://facebook.com/brainbattle
+🌐 Facebook Fanpage: https://facebook.com/brainbattle
 
-🗣️ Discord cộng đồng: https://discord.gg/brainbattle
+🗣️ Community Discord: https://discord.gg/brainbattle
