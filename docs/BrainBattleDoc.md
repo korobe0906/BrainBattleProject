@@ -1,4 +1,4 @@
-📚 BrainBattle – Gamified Language Learning Platform
+                                                📚 BrainBattle – Gamified Language Learning Platform
 
 I. 🎯 Introduction
 
@@ -17,33 +17,33 @@ The project is built on a microservice architecture, enabling scalability, modul
 II. 🏗 System Architecture
 Frontend:
 
-Flutter (Mobile App)
-
-Next.js (Web Client, Web Admin, Main App)
+  Flutter (Mobile App)
+  
+  Next.js (Web Client, Web Admin, Main App)
 
 Backend:
 
-Supabase (Authentication, Database, Realtime)
-
-FastAPI (Business Logic, AI Services)
-
-Socket.io (Real-time Quiz Battles)
+  Supabase (Authentication, Database, Realtime)
+  
+  FastAPI (Business Logic, AI Services)
+  
+  Socket.io (Real-time Quiz Battles)
 
 AI:
 
-OpenAI API, Retrieval-Augmented Generation (RAG), Ontology Mapping
+  OpenAI API, Retrieval-Augmented Generation (RAG), Ontology Mapping
 
 Blockchain:
 
-Polygon Mumbai Testnet, MetaMask, NFT-based Certificates
+  Polygon Mumbai Testnet, MetaMask, NFT-based Certificates
 
 Media:
 
-Firebase Storage (Video and Livestream Content)
+  Firebase Storage (Video and Livestream Content)
 
 DevOps:
 
-Docker, GitHub Actions, Monorepo project structure
+  Docker, GitHub Actions, Monorepo project structure
 
 III. 📁 Repository Structure
 
