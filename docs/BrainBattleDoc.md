@@ -1,5 +1,7 @@
 📚 BrainBattle – Gamified Language Learning Platform
+
 I. 🎯 Introduction
+
 BrainBattle is an innovative language learning platform that combines:
 
 🌐 TikTok-style nonlinear learning experience
@@ -46,7 +48,9 @@ Docker, GitHub Actions, Monorepo project structure
 III. 📁 Repository Structure
 
 IV. ⚙️ Local Development Setup
+
 Clone the repository and run:
+
 git clone https://github.com/korobe0906/BrainBattleProject.git
 
 V. 🧑‍💻 Team Members
