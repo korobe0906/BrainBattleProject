@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:characters/characters.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../../widgets/brainbattle_logo_anim.dart';
@@ -21,41 +22,55 @@ class _SplashPageState extends State<SplashPage>
   late final List<Animation<double>> _opacities; // mỗi ký tự: 0 -> 1
 
   // Tùy chỉnh hiệu ứng
-  static const double _fallDistance = 18;          // rơi xuống bao nhiêu px
+  static const double _fallDistance = 18;
   static const Duration _perCharDelay = Duration(milliseconds: 80);
-  static const Duration _perCharFall = Duration(milliseconds: 450);
+  static const Duration _perCharFall  = Duration(milliseconds: 450);
+
+  int _done = 0;
+  void _tryGoNext() {
+    if (!mounted) return;
+    // Chờ cả 2: chữ rơi xong + logo xoay xong
+    if (++_done == 2) {
+      Navigator.of(context).pushReplacementNamed(StarterPage.routeName);
+    }
+  }
 
   @override
   void initState() {
     super.initState();
 
-    // Tổng thời gian = delay * (n-1) + fall
-    final total = _perCharDelay * (_title.length - 1) + _perCharFall;
+    final chars = _title.characters.toList(); // đồng nhất Unicode
+    final total = _perCharDelay * (chars.length - 1) + _perCharFall;
+
     _lettersCtrl = AnimationController(vsync: this, duration: total)
       ..addStatusListener((st) {
-        if (st == AnimationStatus.completed && mounted) {
-          Navigator.of(context).pushReplacementNamed(StarterPage.routeName);
-        }
+        if (st == AnimationStatus.completed) _tryGoNext();
       })
       ..forward();
 
-    // Tạo animation cho từng ký tự (stagger)
     _dropYs = [];
     _opacities = [];
-    for (int i = 0; i < _title.length; i++) {
+    for (int i = 0; i < chars.length; i++) {
       final start = i * _perCharDelay.inMilliseconds / total.inMilliseconds;
       final end = (i * _perCharDelay.inMilliseconds + _perCharFall.inMilliseconds) /
           total.inMilliseconds;
 
       final curved = CurvedAnimation(
         parent: _lettersCtrl,
-        curve: Interval(start, end.clamp(0.0, 1.0),
-            curve: Curves.easeOutBack), // bật nhẹ khi chạm đáy
+        curve: Interval(
+          start,
+          end.clamp(0.0, 1.0),
+          curve: Curves.easeOutBack, // bật nhẹ khi chạm đáy
+        ),
       );
 
       final fadeCurve = CurvedAnimation(
         parent: _lettersCtrl,
-        curve: Interval(start, end.clamp(0.0, 1.0), curve: Curves.easeOut),
+        curve: Interval(
+          start,
+          end.clamp(0.0, 1.0),
+          curve: Curves.easeOut,
+        ),
       );
 
       _dropYs.add(Tween<double>(begin: -_fallDistance, end: 0).animate(curved));
@@ -72,28 +87,27 @@ class _SplashPageState extends State<SplashPage>
   @override
   Widget build(BuildContext context) {
     final screenW = MediaQuery.of(context).size.width;
-    final titleSize = (screenW * 0.085).clamp(24.0, 34.0);
+    final double titleSize = (screenW * 0.085).clamp(24.0, 34.0) as double;
 
     return Scaffold(
-      backgroundColor: BBColors.darkBg,
+      backgroundColor: BBColors.darkBg, // match theme nền tối của bạn
       body: SafeArea(
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Logo động: Lottie nền loop + logo xoay đúng 1 vòng rồi dừng
-              const BrainBattleLogoAnim(
+              BrainBattleLogoAnim(
                 logoAsset: 'assets/logo.png',
                 loopLottieAsset: 'assets/animations/logo_animation.json',
                 turnsCount: 1.0,
-                spinTotalDuration: Duration(seconds: 4),
+                spinTotalDuration: const Duration(seconds: 4), // khớp yêu cầu bạn
                 spinCurve: Curves.linear,
                 widthFactor: 0.66,
                 logoFactor: 0.33,
+                onSpinEnd: _tryGoNext, // báo “logo xoay xong”
               ),
               const SizedBox(height: 28),
 
-              // Tiêu đề: từng ký tự rơi xuống (staggered)
               _AnimatedTitle(
                 title: _title,
                 drops: _dropYs,
@@ -124,7 +138,7 @@ class _AnimatedTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final chars = title.characters.toList(); // hỗ trợ cả emoji/Unicode
+    final chars = title.characters.toList();
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: List.generate(chars.length, (i) {
