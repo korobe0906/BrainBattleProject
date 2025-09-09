@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
 /// Logo động: nền Lottie loop vô hạn + logo xoay N vòng rồi dừng.
-/// - Tự scale theo kích thước màn hình (responsive)
+/// - Có callback `onSpinEnd` để báo hoàn tất xoay.
 class BrainBattleLogoAnim extends StatefulWidget {
   const BrainBattleLogoAnim({
     super.key,
@@ -13,25 +13,20 @@ class BrainBattleLogoAnim extends StatefulWidget {
     this.spinCurve = Curves.linear,
     this.widthFactor = 0.66,           // tỉ lệ bề rộng khung so với chiều ngang màn hình
     this.logoFactor = 0.33,            // tỉ lệ bề rộng logo so với chiều ngang màn hình
+    this.onSpinEnd,
   });
 
   final String logoAsset;
   final String loopLottieAsset;
 
-  /// Số vòng xoay của logo. Có thể là số thực (vd 1.5 vòng).
   final double turnsCount;
-
-  /// Tổng thời gian xoay turnsCount vòng.
   final Duration spinTotalDuration;
-
-  /// Curve cho xoay (linear = đều).
   final Curve spinCurve;
 
-  /// Khung Lottie chiếm bao nhiêu bề ngang màn hình (0→1).
   final double widthFactor;
-
-  /// Logo chiếm bao nhiêu bề ngang màn hình (0→1).
   final double logoFactor;
+
+  final VoidCallback? onSpinEnd;
 
   @override
   State<BrainBattleLogoAnim> createState() => _BrainBattleLogoAnimState();
@@ -40,24 +35,28 @@ class BrainBattleLogoAnim extends StatefulWidget {
 class _BrainBattleLogoAnimState extends State<BrainBattleLogoAnim>
     with TickerProviderStateMixin {
   late final AnimationController _spinCtrl;
-  late final Animation<double> _turns;        // 0 → turnsCount
-  late final AnimationController _lottieCtrl; // loop lottie
+  late final Animation<double> _turns;
+  late final AnimationController _lottieCtrl;
 
   @override
   void initState() {
     super.initState();
 
-    // Xoay logo: chạy 1 lần rồi dừng
     _spinCtrl = AnimationController(
       vsync: this,
       duration: widget.spinTotalDuration,
-    );
+    )..addStatusListener((st) {
+        if (st == AnimationStatus.completed) {
+          widget.onSpinEnd?.call();
+        }
+      });
+
     _turns = Tween<double>(begin: 0, end: widget.turnsCount).animate(
       CurvedAnimation(parent: _spinCtrl, curve: widget.spinCurve),
     );
+
     _spinCtrl.forward();
 
-    // Lottie: lặp vô hạn (set duration theo composition để mượt)
     _lottieCtrl = AnimationController(vsync: this);
   }
 
@@ -71,10 +70,8 @@ class _BrainBattleLogoAnimState extends State<BrainBattleLogoAnim>
   @override
   Widget build(BuildContext context) {
     final screenW = MediaQuery.of(context).size.width;
-
-    // Tính kích thước responsive, kèm clamp để tránh quá to/nhỏ.
-    final boxSize = (screenW * widget.widthFactor).clamp(180.0, 320.0);
-    final logoSize = (screenW * widget.logoFactor).clamp(100.0, 180.0);
+    final double boxSize = (screenW * widget.widthFactor).clamp(180.0, 320.0) as double;
+    final double logoSize = (screenW * widget.logoFactor).clamp(100.0, 180.0) as double;
 
     return SizedBox(
       width: boxSize,
