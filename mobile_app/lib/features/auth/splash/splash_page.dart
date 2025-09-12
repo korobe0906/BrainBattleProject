@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../../widgets/brainbattle_logo_anim.dart';
+import '../../../widgets/falling_text.dart';
+
 import '../starter/starter_page.dart';
 
 class SplashPage extends StatefulWidget {
@@ -49,8 +51,22 @@ class _SplashPageState extends State<SplashPage> {
                 spinCurve: Curves.linear, // giữ vận tốc góc đều
               ),
               const SizedBox(height: 28),
-
-              
+              // dưới logo:
+              FallingText(
+                text: _title,
+                totalDuration: const Duration(
+                  seconds: 20,
+                ), // <-- đổi từ duration -> totalDuration
+                distance: 64,
+                dropCurve: Curves.easeOutBack,
+                fadeHeadPortion: 0.35,
+                style: TextStyle(
+                  fontSize: titleSize,
+                  fontWeight: FontWeight.w800,
+                  color: BBColors.textPrimary,
+                  letterSpacing: 0.5,
+                ),
+              ),
             ],
           ),
         ),
