@@ -50,16 +50,7 @@ class _SplashPageState extends State<SplashPage> {
               ),
               const SizedBox(height: 28),
 
-              // Chữ hiển thị bình thường, không hiệu ứng
-              Text(
-                _title,
-                style: TextStyle(
-                  fontSize: titleSize,
-                  fontWeight: FontWeight.w800,
-                  color: BBColors.textPrimary,
-                  letterSpacing: 0.5,
-                ),
-              ),
+              
             ],
           ),
         ),
