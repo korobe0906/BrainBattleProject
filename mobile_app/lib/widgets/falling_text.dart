@@ -13,12 +13,11 @@ class FallingText extends StatefulWidget {
     required this.text,
     required this.style,
     this.totalDuration = const Duration(seconds: 20),
-    this.distance = 56.0,
-    this.dropCurve = Curves.easeOutCubic,
-    this.fadeHeadPortion = 0.4, // 40% đầu đoạn của từng ký tự dùng để fade-in
+    this.distance = 64.0,
+    this.dropCurve = Curves.easeOutQuint,
+    this.fadeHeadPortion = 0.1, // 40% đầu đoạn của từng ký tự dùng để fade-in
     this.letterSpacing,
   });
-
   final String text;
   final TextStyle style;
 
@@ -40,8 +39,7 @@ class FallingText extends StatefulWidget {
   State<FallingText> createState() => _FallingTextState();
 }
 
-class _FallingTextState extends State<FallingText>
-    with SingleTickerProviderStateMixin {
+class _FallingTextState extends State<FallingText> with SingleTickerProviderStateMixin {
   late AnimationController _ctrl;
   late List<String> _chars;
   late List<Animation<double>> _drops;
@@ -78,26 +76,16 @@ class _FallingTextState extends State<FallingText>
     for (int i = 0; i < n; i++) {
       // Mỗi ký tự chiếm một "đoạn" bằng nhau trong tổng thời gian
       final double start = (i / n).clamp(0.0, 1.0);
-      final double end = ((i + 1) / n).clamp(0.0, 1.0);
-      final double fadeEnd = (start + (end - start) * widget.fadeHeadPortion)
-          .clamp(0.0, 1.0);
+      final double end   = ((i + 1) / n).clamp(0.0, 1.0);
+      final double fadeEnd = (start + (end - start) * widget.fadeHeadPortion).clamp(0.0, 1.0);
 
       final dropIv = Interval(start, end);
       final fadeIv = Interval(start, fadeEnd);
 
-      final dropCurve = CurvedAnimation(
-        parent: _ctrl,
-        curve: _IntervalCurve(widget.dropCurve, dropIv),
-      );
-      final fadeCurve = CurvedAnimation(
-        parent: _ctrl,
-        curve: _IntervalCurve(Curves.easeOut, fadeIv),
-      );
+      final dropCurve = CurvedAnimation(parent: _ctrl, curve: _IntervalCurve(widget.dropCurve, dropIv));
+      final fadeCurve = CurvedAnimation(parent: _ctrl, curve: _IntervalCurve(Curves.easeOut, fadeIv));
 
-      _drops[i] = Tween<double>(
-        begin: -widget.distance,
-        end: 0,
-      ).animate(dropCurve);
+      _drops[i] = Tween<double>(begin: -widget.distance, end: 0).animate(dropCurve);
       _fades[i] = Tween<double>(begin: 0, end: 1).animate(fadeCurve);
     }
 
@@ -127,8 +115,7 @@ class _FallingTextState extends State<FallingText>
                 child: Text(
                   _chars[i],
                   style: widget.style.copyWith(
-                    letterSpacing:
-                        widget.letterSpacing ?? widget.style.letterSpacing,
+                    letterSpacing: widget.letterSpacing ?? widget.style.letterSpacing,
                   ),
                 ),
               ),
