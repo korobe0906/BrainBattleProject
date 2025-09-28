@@ -109,7 +109,10 @@ class StarterPage extends StatelessWidget {
                               padding:
                                   const EdgeInsets.symmetric(vertical: 14),
                             ),
-                            onPressed: () {},
+                            onPressed: () {
+  Navigator.pushReplacementNamed(context, '/messaging');
+},
+
                             child: const Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
