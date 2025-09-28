@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'palette.dart';
+
+ThemeData bbDarkTheme()  => ThemeData(useMaterial3: true, colorScheme: BBPalette.scheme(Brightness.dark));
+ThemeData bbLightTheme() => ThemeData(useMaterial3: true, colorScheme: BBPalette.scheme(Brightness.light));
 
 class BBColors {
   static const Color yellow = Color(0xFFF1C40F);
@@ -8,14 +12,3 @@ class BBColors {
   static const Color textSecondary = Color(0xFFBFC7CF);
 }
 
-ThemeData bbDarkTheme() {
-  return ThemeData(
-    brightness: Brightness.dark,
-    scaffoldBackgroundColor: BBColors.darkBg,
-    colorScheme: const ColorScheme.dark(
-      primary: BBColors.yellow,
-      secondary: BBColors.yellow,
-    ),
-    useMaterial3: true,
-  );
-}
