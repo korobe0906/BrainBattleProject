@@ -6,31 +6,25 @@ import 'features/messaging/ui/conversations_page.dart';
 import 'features/learning/learning.dart';
 import 'features/learning/ui/galaxy_map_screen.dart';
 
-
 class BrainBattleApp extends StatelessWidget {
   const BrainBattleApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-        return MaterialApp(
+    return MaterialApp(
       title: 'BrainBattle',
       debugShowCheckedModeBanner: false,
       theme: bbLightTheme(),
       darkTheme: bbDarkTheme(),
-      initialRoute: SplashPage.routeName,         
-
+      themeMode: ThemeMode.dark, // tránh nháy nền trắng
+      home: const SplashPage(), // build Splash ngay, không qua tra cứu route
       routes: {
-        SplashPage.routeName: (_) => const SplashPage(),
         StarterPage.routeName: (_) => const StarterPage(),
         ConversationsPage.routeName: (_) => const ConversationsPage(),
         LessonsScreen.routeName: (_) => const LessonsScreen(),
-       
       },
-
-      // (tuỳ chọn) fallback nếu gõ nhầm route
       onUnknownRoute: (_) =>
           MaterialPageRoute(builder: (_) => const StarterPage()),
     );
-
   }
 }
