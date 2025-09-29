@@ -1,15 +1,15 @@
 'use client';
 
 import Image from 'next/image';
-import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import gsap from 'gsap';
 import { Mail, CheckCircle2, ArrowLeft } from 'lucide-react';
+import GsapUnderlineField from '@/components/gsap/GsapUnderlineField';
+import GradientLink from '@/components/gsap/GradientLink';
 
 export default function ForgotPasswordPage() {
   const router = useRouter();
-
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
@@ -17,15 +17,13 @@ export default function ForgotPasswordPage() {
 
   const formRef = useRef<HTMLDivElement | null>(null);
   const ctaRef = useRef<HTMLButtonElement | null>(null);
+  const shineRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     gsap.fromTo(formRef.current, { y: 10, opacity: 0 }, { y: 0, opacity: 1, duration: 0.45, ease: 'power3.out' });
   }, []);
 
-  const validate = () => {
-    if (!email.trim() || !/^\S+@\S+\.\S+$/.test(email)) return 'Email không hợp lệ.';
-    return null;
-  };
+  const validate = () => (!email.trim() || !/^\S+@\S+\.\S+$/.test(email) ? 'Email không hợp lệ.' : null);
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,55 +41,55 @@ export default function ForgotPasswordPage() {
     setOkMsg('Đã gửi liên kết đặt lại mật khẩu vào email của bạn.');
     gsap.to(ctaRef.current, { scale: 0.98, duration: 0.12, yoyo: true, repeat: 1, ease: 'power2.inOut' });
     gsap.to(formRef.current, { opacity: 0.85, duration: 0.2 });
-
-    // Fake API + tự động quay về trang đăng nhập
     setTimeout(() => router.push('/sign-in'), 2500);
+  };
+
+  const onCtaEnter = () => {
+    const el = ctaRef.current, shine = shineRef.current;
+    if (!el || !shine) return;
+    gsap.set(shine, { xPercent: -60, opacity: 0.9, scale: 0.95 });
+    const tl = gsap.timeline({ defaults: { ease: 'power2.out' } });
+    tl.to(el, { backgroundPosition: '100% 0%', duration: 0.8 }, 0)
+      .to(shine, { xPercent: 160, scale: 1.05, duration: 0.8 }, 0)
+      .to(el, { boxShadow: '0 0 20px rgba(236,72,153,.6)', duration: 0.3 }, 0);
+  };
+  const onCtaLeave = () => {
+    const el = ctaRef.current;
+    if (!el) return;
+    gsap.to(el, { backgroundPosition: '0% 0%', boxShadow: '0 0 0 rgba(0,0,0,0)', duration: 0.5, ease: 'power3.inOut' });
   };
 
   return (
     <div ref={formRef} className="w-full max-w-md">
-      {/* Header nhỏ */}
       <div className="flex items-center mb-6">
-        <button
-          onClick={() => router.back()}
-          className="mr-2 p-1 rounded hover:bg-gray-100 text-gray-600"
-          aria-label="Quay lại"
-        >
+        <button onClick={() => router.back()} className="mr-2 p-1 rounded hover:bg-gray-100 text-gray-600" aria-label="Quay lại">
           <ArrowLeft className="w-5 h-5" />
         </button>
 
-        <div className="relative w-10 h-10 rotate-315 mr-2">
-          <Image src="/images/frame_logo.png" alt="BrainBattle Logo" fill className="object-contain" priority />
-          <div className="absolute inset-0 flex items-center justify-center text-white text-base font-extrabold">
-            B
-          </div>
+        <div className="relative w-10 h-10 mr-2">
+          <Image src="/images/brainbattle_logo_really_pink.png" alt="BrainBattle Logo" fill className="object-contain" priority />
         </div>
-        <h1 className="text-xl font-semibold text-gray-800">Brain Battle</h1>
+        <h1 className="text-2xl font-extrabold tracking-widest uppercase bg-gradient-to-r from-pink-500 via-pink-400 to-purple-400 text-transparent bg-clip-text">
+          Brain Battle
+        </h1>
       </div>
 
       <h2 className="text-lg font-medium text-gray-900 mb-2">Quên mật khẩu</h2>
-      <p className="text-sm text-gray-500 mb-6">
-        Nhập email bạn đã đăng ký. Chúng tôi sẽ gửi liên kết để đặt lại mật khẩu.
-      </p>
+      <p className="text-sm text-gray-500 mb-6">Nhập email bạn đã đăng ký. Chúng tôi sẽ gửi liên kết để đặt lại mật khẩu.</p>
 
-      {/* Form (underline style) */}
       <form className="space-y-5" onSubmit={onSubmit}>
         <div>
           <label className="block text-sm text-gray-500 mb-1">Email</label>
-          <div className="flex items-center gap-2 border-b border-gray-300 focus-within:border-black">
-            <Mail className="w-4 h-4 text-gray-400" />
-            <input
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              type="email"
-              placeholder="Địa chỉ email"
-              className="w-full py-2 outline-none placeholder:text-gray-400"
-              autoComplete="email"
-            />
-          </div>
+          <GsapUnderlineField
+            icon={Mail}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            type="email"
+            placeholder="Địa chỉ email"
+            autoComplete="email"
+          />
         </div>
 
-        {/* Error / Success */}
         {err && <p className="text-sm text-red-600">{err}</p>}
         {okMsg && (
           <p className="text-sm text-emerald-600 flex items-center gap-1">
@@ -99,21 +97,25 @@ export default function ForgotPasswordPage() {
           </p>
         )}
 
-        {/* CTA */}
         <button
           ref={ctaRef}
           type="submit"
           disabled={loading}
-          className="w-full rounded-full py-3 text-black font-semibold bg-yellow-400 hover:bg-yellow-300 transition disabled:opacity-70"
+          onMouseEnter={onCtaEnter}
+          onMouseLeave={onCtaLeave}
+          className="relative overflow-hidden w-full rounded-full py-3 font-semibold text-white uppercase tracking-wider transition disabled:opacity-70 border border-white/30 bg-[linear-gradient(90deg,#f9a8d4,#f472b6,#c084fc)] bg-[length:200%_100%] bg-left"
+          aria-busy={loading}
         >
-          {loading ? 'Đang gửi…' : 'Gửi liên kết đặt lại'}
+          <div
+            ref={shineRef}
+            className="pointer-events-none absolute inset-y-0 -left-1/3 aspect-square rounded-full blur-md mix-blend-screen"
+            style={{ background: 'radial-gradient(closest-side, rgba(255,255,255,.95), rgba(255,255,255,.35) 60%, rgba(255,255,255,0) 70%)' }}
+          />
+          <span className="relative z-10">{loading ? 'Đang gửi…' : 'Gửi liên kết đặt lại'}</span>
         </button>
 
-        <p className="text-center text-sm text-gray-600">
-          Nhớ mật khẩu rồi?{' '}
-          <Link href="/sign-in" className="text-gray-900 font-medium hover:underline">
-            Đăng nhập
-          </Link>
+        <p className="text-center text-sm text-gray-700">
+          Nhớ mật khẩu rồi? <GradientLink href="/sign-in">Đăng nhập</GradientLink>
         </p>
       </form>
     </div>
