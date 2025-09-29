@@ -39,7 +39,7 @@ class _SplashPageState extends State<SplashPage> {
             children: [
               BrainBattleLogoAnim(
                 logoAsset: 'assets/logo.png',
-                loopLottieAsset: 'assets/animations/logo_animation.json',
+                loopLottieAsset: 'assets/animations/animated_logo_light_pink.json',
 
                 // ✅ Đồng bộ spin với Lottie:
                 syncToLottie: true,
