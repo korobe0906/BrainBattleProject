@@ -2,14 +2,22 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../learning/learning.dart';
+import '../../learning/ui/galaxy_map_screen.dart';
 
 class StarterPage extends StatelessWidget {
   const StarterPage({super.key});
   static const routeName = '/starter';
 
+  // Màu chữ giống Splash
+  static const _pinkBrain = Color(0xFFFF8FAB);
+  static const _pinkBattle = Color(0xFFF3B4C3);
+
   @override
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
+    final w = MediaQuery.of(context).size.width;
+    final titleSize = (w * 0.09).clamp(24.0, 34.0).toDouble();
+
     return Scaffold(
       backgroundColor: BBColors.darkBg,
       body: SafeArea(
@@ -24,15 +32,36 @@ class StarterPage extends StatelessWidget {
                   children: [
                     const SizedBox(height: 8),
                     const Image(
-                      image: AssetImage('assets/logo.png'),
+                      image: AssetImage(
+                        'assets/brainbattle_logo_light_pink.png',
+                      ),
                       width: 92,
                       height: 92,
                     ),
-                    const SizedBox(height: 12),
-                    Text(
-                      'BrainBattle',
-                      style: text.displayMedium!.copyWith(
-                        color: BBColors.textPrimary,
+                    const SizedBox(height: 28),
+                    RichText(
+                      textAlign: TextAlign.center,
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: 'BRAIN ',
+                            style: TextStyle(
+                              fontSize: titleSize,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: 4.0,
+                              color: _pinkBrain,
+                            ),
+                          ),
+                          TextSpan(
+                            text: 'BATTLE',
+                            style: TextStyle(
+                              fontSize: titleSize,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: 4.0,
+                              color: _pinkBattle,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
@@ -40,14 +69,14 @@ class StarterPage extends StatelessWidget {
               ),
             ),
 
-            // Card vàng
+            // Card pastel
             Align(
               alignment: Alignment.bottomCenter,
               child: Container(
                 margin: const EdgeInsets.all(20),
                 padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
                 decoration: BoxDecoration(
-                  color: BBColors.yellow,
+                  color: const Color(0xFF2A2238), // tím than đậm pastel
                   borderRadius: BorderRadius.circular(18),
                 ),
                 child: Column(
@@ -57,7 +86,7 @@ class StarterPage extends StatelessWidget {
                       width: 64,
                       height: 5,
                       decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.2),
+                        color: Colors.white24,
                         borderRadius: BorderRadius.circular(16),
                       ),
                     ),
@@ -66,9 +95,10 @@ class StarterPage extends StatelessWidget {
                       'Learn the local language for free!',
                       textAlign: TextAlign.center,
                       style: text.titleMedium!.copyWith(
-                        color: Colors.black,
+                        color: Colors.white,
                         fontSize: 20,
                         height: 1.2,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -76,7 +106,7 @@ class StarterPage extends StatelessWidget {
                       'Learn all local languages\ninteractively at your fingertips!',
                       textAlign: TextAlign.center,
                       style: text.bodyMedium!.copyWith(
-                        color: Colors.black87,
+                        color: Colors.white70,
                         height: 1.35,
                       ),
                     ),
@@ -92,7 +122,9 @@ class StarterPage extends StatelessWidget {
                           width: active ? 18 : 8,
                           height: 8,
                           decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(active ? 0.8 : 0.3),
+                            color: active
+                                ? Colors.white
+                                : Colors.white.withOpacity(0.3),
                             borderRadius: BorderRadius.circular(8),
                           ),
                         );
@@ -106,15 +138,18 @@ class StarterPage extends StatelessWidget {
                         Expanded(
                           child: OutlinedButton(
                             style: OutlinedButton.styleFrom(
-                              foregroundColor: Colors.black,
-                              side: const BorderSide(color: Colors.black),
+                              foregroundColor: _pinkBrain,
+                              side: const BorderSide(color: _pinkBrain),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(24),
                               ),
                               padding: const EdgeInsets.symmetric(vertical: 14),
                             ),
                             onPressed: () {
-                              Navigator.pushReplacementNamed(context, '/messaging');
+                              Navigator.pushReplacementNamed(
+                                context,
+                                '/messaging',
+                              );
                             },
                             child: const Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -130,7 +165,7 @@ class StarterPage extends StatelessWidget {
                         Expanded(
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.white,
+                              backgroundColor: _pinkBattle,
                               foregroundColor: Colors.black,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(24),
@@ -154,29 +189,48 @@ class StarterPage extends StatelessWidget {
 
                     const SizedBox(height: 12),
 
-                    // ✅ Nút bắt đầu học tiếng Anh (đi lessons)
+                    // ✅ Nút bắt đầu học tiếng Anh
                     SizedBox(
                       width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blueAccent,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(24),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [
+                              Color(0xFFFFB3C6), // nhạt
+                              Color(0xFFFB6F92), // đậm
+                            ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
                           ),
-                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          borderRadius: BorderRadius.circular(24),
                         ),
-                        onPressed: () {
-                        // Navigator.pushNamed(context, LessonsScreen.routeName);
-                          Navigator.push(context, MaterialPageRoute(builder: (_) => const GalaxyMapScreen()));
-                        },
-                        child: const Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text('Bắt đầu học tiếng Anh'),
-                            SizedBox(width: 6),
-                            Icon(Icons.school, size: 18),
-                          ],
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors
+                                .transparent, // quan trọng: để lộ gradient
+                            shadowColor: Colors.transparent, // bỏ bóng
+                            foregroundColor: Colors.white, // text + icon trắng
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(24),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                          ),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const GalaxyMapScreen(),
+                              ),
+                            );
+                          },
+                          child: const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text('Bắt đầu học tiếng Anh'),
+                              SizedBox(width: 6),
+                              Icon(Icons.school, size: 18),
+                            ],
+                          ),
                         ),
                       ),
                     ),

@@ -66,7 +66,7 @@ class _SplashPageState extends State<SplashPage>
     final w = MediaQuery.of(context).size.width;
     final titleSize = (w * 0.10).clamp(26.0, 40.0).toDouble();
     final subSize   = (titleSize * 0.38).clamp(10.0, 16.0).toDouble();
-  final lottieHeight = (w * 0.55).clamp(200.0, 280.0);
+  final lottieHeight = (w * 1.00).clamp(200.0, 280.0);
 
     return Scaffold(
       backgroundColor: _black,
