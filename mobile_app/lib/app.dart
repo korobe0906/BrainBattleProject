@@ -4,6 +4,7 @@ import 'features/auth/splash/splash_page.dart';
 import 'features/auth/starter/starter_page.dart';
 import 'features/messaging/ui/conversations_page.dart';
 import 'features/learning/learning.dart';
+import 'features/learning/ui/galaxy_map_screen.dart';
 
 
 class BrainBattleApp extends StatelessWidget {
@@ -23,6 +24,7 @@ class BrainBattleApp extends StatelessWidget {
         StarterPage.routeName: (_) => const StarterPage(),
         ConversationsPage.routeName: (_) => const ConversationsPage(),
         LessonsScreen.routeName: (_) => const LessonsScreen(),
+       
       },
 
       // (tuỳ chọn) fallback nếu gõ nhầm route
