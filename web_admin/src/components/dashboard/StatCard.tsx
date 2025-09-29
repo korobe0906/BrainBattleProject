@@ -20,25 +20,24 @@ export default function StatCard({
   return (
     <div
       className="p-4 rounded-xl space-y-2
-                 bg-gradient-to-b from-[#1A1D24] to-[#22252C]
-                 border border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.25)]
-                 transition hover:shadow-[0_6px_24px_rgba(0,0,0,0.35)]"
+                 bg-white border border-gray-200 shadow-sm
+                 transition hover:shadow-md"
     >
       {/* Icon + Label */}
-      <div className="flex items-center gap-2 text-[#FFD84D]">
+      <div className="flex items-center gap-2 text-pink-600">
         <Icon className="w-5 h-5" />
         <span className="font-medium text-sm">{label}</span>
       </div>
 
       {/* Value */}
-      <div className="text-3xl font-bold text-white">{value}</div>
+      <div className="text-3xl font-bold text-gray-900">{value}</div>
 
       {/* Change */}
       <div
         className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium
           ${isIncrease
-            ? 'bg-green-500/10 text-green-400'
-            : 'bg-red-500/10 text-red-400'
+            ? 'bg-green-100 text-green-700'
+            : 'bg-red-100 text-red-600'
           }`}
       >
         {isIncrease ? '▲' : '▼'} {change}

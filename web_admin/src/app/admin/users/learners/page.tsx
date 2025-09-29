@@ -6,27 +6,25 @@ import {
   Eye, Pencil, Trash2, MoreVertical
 } from 'lucide-react';
 
-// Trạng thái tài khoản
 type AccountStatus = 'active' | 'suspended' | 'deleted';
 
-// Dữ liệu người dùng mở rộng
 type UserRow = {
-  id: string;                // UUID
-  name: string;              // Họ tên
-  username: string;          // duy nhất
+  id: string;
+  name: string;
+  username: string;
   email: string;
   emailVerified: boolean;
   phone?: string;
   avatarUrl?: string;
   gender: 'Nam' | 'Nữ' | 'Khác';
-  dob?: string;              // YYYY-MM-DD
-  country: string;           // ví dụ: VN
-  timezone: string;          // ví dụ: Asia/Ho_Chi_Minh
-  language: string;          // vi, en...
+  dob?: string;
+  country: string;
+  timezone: string;
+  language: string;
   status: AccountStatus;
-  createdAt: string;         // ISO
-  lastLogin?: string;        // ISO
-  lastDevice?: string;       // Tên thiết bị gần nhất
+  createdAt: string;
+  lastLogin?: string;
+  lastDevice?: string;
 };
 
 /* -------------------- Dropdown Action Menu -------------------- */
@@ -42,14 +40,11 @@ function ActionMenu({
   const [open, setOpen] = useState(false);
   const boxRef = useRef<HTMLDivElement | null>(null);
 
-  // Đóng khi click ra ngoài / ESC
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
       if (boxRef.current && !boxRef.current.contains(e.target as Node)) setOpen(false);
     };
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setOpen(false);
-    };
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false); };
     document.addEventListener('mousedown', onClick);
     document.addEventListener('keydown', onKey);
     return () => {
@@ -61,11 +56,10 @@ function ActionMenu({
   return (
     <div className="relative inline-block" ref={boxRef}>
       <button
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => setOpen(v => !v)}
         aria-haspopup="menu"
         aria-expanded={open}
-        className="p-2 rounded-full bg-white/10 hover:bg-white/15 border border-white/10 text-white transition"
-        title="Thao tác"
+        className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 transition"
       >
         <MoreVertical className="w-4 h-4" />
       </button>
@@ -74,26 +68,26 @@ function ActionMenu({
         <div
           role="menu"
           className="absolute right-0 mt-2 w-36 rounded-xl overflow-hidden
-                     bg-[#1F232B] border border-white/10 shadow-[0_12px_40px_rgba(0,0,0,0.35)] z-10"
+                     bg-white border border-gray-200 shadow-lg z-10"
         >
           <button
             role="menuitem"
             onClick={() => { setOpen(false); onView(); }}
-            className="w-full px-3 py-2 text-left text-sm text-white/90 hover:bg-white/5 flex items-center gap-2"
+            className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-pink-50 flex items-center gap-2"
           >
             <Eye className="w-4 h-4" /> Xem
           </button>
           <button
             role="menuitem"
             onClick={() => { setOpen(false); onEdit(); }}
-            className="w-full px-3 py-2 text-left text-sm text-white/90 hover:bg-white/5 flex items-center gap-2"
+            className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-pink-50 flex items-center gap-2"
           >
             <Pencil className="w-4 h-4" /> Sửa
           </button>
           <button
             role="menuitem"
             onClick={() => { setOpen(false); onDelete(); }}
-            className="w-full px-3 py-2 text-left text-sm text-rose-400 hover:bg-white/5 flex items-center gap-2"
+            className="w-full px-3 py-2 text-left text-sm text-rose-600 hover:bg-rose-50 flex items-center gap-2"
           >
             <Trash2 className="w-4 h-4" /> Xóa
           </button>
@@ -110,7 +104,6 @@ export default function UserListPage() {
   const [status, setStatus] = useState<AccountStatus | 'Tất cả'>('Tất cả');
 
   useEffect(() => {
-    // Demo data (sau thay bằng fetch API)
     setUsers([
       {
         id: '7f1a9f9e-5a7e-4df1-8a3b-9f1b2c3d4e5f',
@@ -204,32 +197,32 @@ export default function UserListPage() {
   };
 
   const statusBadge = (s: AccountStatus) => {
-    if (s === 'active') return 'bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/20';
-    if (s === 'suspended') return 'bg-amber-500/10 text-amber-400 ring-1 ring-amber-500/20';
-    return 'bg-rose-500/10 text-rose-400 ring-1 ring-rose-500/20';
+    if (s === 'active') return 'bg-emerald-100 text-emerald-700 ring-1 ring-emerald-300';
+    if (s === 'suspended') return 'bg-amber-100 text-amber-700 ring-1 ring-amber-300';
+    return 'bg-rose-100 text-rose-700 ring-1 ring-rose-300';
   };
 
   return (
     <div className="space-y-5">
       {/* Tools */}
-      <div className="rounded-2xl p-4 bg-gradient-to-b from-[#1F232B] to-[#262A32] border border-white/5">
+      <div className="rounded-2xl p-4 bg-white border border-gray-200 shadow-sm">
         <div className="flex flex-col md:flex-row gap-3 md:items-center md:justify-between">
           <div className="relative w-full md:max-w-md">
-            <Search className="w-4 h-4 text-white/60 absolute left-3 top-1/2 -translate-y-1/2" />
+            <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               value={q}
               onChange={e => setQ(e.target.value)}
               placeholder="Tìm theo tên, username, email, số điện thoại hoặc UUID…"
-              className="w-full pl-9 pr-3 py-2 rounded-lg bg-white/5 text-white placeholder:text-white/50 border border-white/10 focus:outline-none focus:ring-2 focus:ring-[#FFD84D]/40"
+              className="w-full pl-9 pr-3 py-2 rounded-lg bg-gray-50 text-gray-800 placeholder:text-gray-400 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-400/50"
             />
           </div>
 
           <div className="flex items-center gap-2">
-            <Filter className="w-4 h-4 text-white/60" />
+            <Filter className="w-4 h-4 text-gray-400" />
             <select
               value={status}
               onChange={e => setStatus(e.target.value as any)}
-              className="px-3 py-2 rounded-lg bg-white/5 text-white text-sm border border-white/10 focus:outline-none focus:ring-2 focus:ring-[#FFD84D]/40"
+              className="px-3 py-2 rounded-lg bg-gray-50 text-gray-800 text-sm border border-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-400/50"
             >
               <option>Tất cả</option>
               <option value="active">Hoạt động</option>
@@ -241,10 +234,10 @@ export default function UserListPage() {
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto rounded-2xl bg-gradient-to-b from-[#1F232B] to-[#262A32] border border-white/5">
+      <div className="overflow-x-auto rounded-2xl bg-white border border-gray-200 shadow-sm">
         <table className="min-w-full">
           <thead>
-            <tr className="text-left text-white/70 text-sm border-b border-white/5">
+            <tr className="text-left text-gray-600 text-sm border-b border-gray-200">
               <th className="px-5 py-3 font-medium">Người dùng</th>
               <th className="px-5 py-3 font-medium">User ID (UUID)</th>
               <th className="px-5 py-3 font-medium">Trạng thái</th>
@@ -257,61 +250,56 @@ export default function UserListPage() {
 
           <tbody className="text-sm">
             {filtered.map(u => (
-              <tr key={u.id} className="border-b border-white/5 hover:bg-white/5 transition">
+              <tr key={u.id} className="border-b border-gray-100 hover:bg-gray-50 transition">
                 {/* Người dùng */}
                 <td className="px-5 py-3">
                   <div className="flex items-start gap-3">
-                    <div className="flex items-center">
-                      {/* Avatar */}
-                      <div className="w-9 h-9 rounded-full flex items-center justify-center font-bold uppercase
-                  bg-[#FFD84D] text-[#1F232B]">
-                        {u.avatarUrl ? (
-                          <img
-                            src={u.avatarUrl}
-                            alt={u.name}
-                            className="w-9 h-9 rounded-full object-cover"
-                          />
-                        ) : (
-                          u.name.trim().charAt(0)
-                        )}
-                      </div>
-
+                    <div className="w-9 h-9 rounded-full flex items-center justify-center font-bold uppercase bg-gradient-to-r from-pink-400 to-purple-400 text-white">
+                      {u.avatarUrl ? (
+                        <img
+                          src={u.avatarUrl}
+                          alt={u.name}
+                          className="w-9 h-9 rounded-full object-cover"
+                        />
+                      ) : (
+                        u.name.trim().charAt(0)
+                      )}
                     </div>
 
                     <div className="space-y-0.5">
                       <div className="flex items-center gap-2">
-                        <span className="text-white font-medium">{u.name}</span>
-                        <span className="text-white/50">•</span>
-                        <span className="text-white/70">@{u.username}</span>
+                        <span className="text-gray-900 font-medium">{u.name}</span>
+                        <span className="text-gray-400">•</span>
+                        <span className="text-gray-500">@{u.username}</span>
                       </div>
-                      <div className="flex flex-wrap items-center gap-2 text-white/80">
+                      <div className="flex flex-wrap items-center gap-2 text-gray-600">
                         <span className="inline-flex items-center gap-1">
-                          <Mail className="w-4 h-4 text-white/50" />
+                          <Mail className="w-4 h-4 text-gray-400" />
                           {u.email}
                         </span>
                         {u.emailVerified ? (
-                          <span className="inline-flex items-center gap-1 text-emerald-400">
+                          <span className="inline-flex items-center gap-1 text-emerald-600">
                             <CheckCircle2 className="w-4 h-4" /> Đã xác thực
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 text-amber-400">
+                          <span className="inline-flex items-center gap-1 text-amber-600">
                             <XCircle className="w-4 h-4" /> Chưa xác thực
                           </span>
                         )}
                         {u.phone && (
-                          <span className="inline-flex items-center gap-1 text-white/80">
-                            <Phone className="w-4 h-4 text-white/50" /> {u.phone}
+                          <span className="inline-flex items-center gap-1 text-gray-600">
+                            <Phone className="w-4 h-4 text-gray-400" /> {u.phone}
                           </span>
                         )}
-                        <span className="inline-flex items-center gap-1 text-white/80">
-                          <Globe className="w-4 h-4 text-white/50" /> {u.country} • {u.timezone}
+                        <span className="inline-flex items-center gap-1 text-gray-600">
+                          <Globe className="w-4 h-4 text-gray-400" /> {u.country} • {u.timezone}
                         </span>
-                        <span className="inline-flex items-center gap-1 text-white/80">
-                          <Languages className="w-4 h-4 text-white/50" /> {u.language}
+                        <span className="inline-flex items-center gap-1 text-gray-600">
+                          <Languages className="w-4 h-4 text-gray-400" /> {u.language}
                         </span>
                         {u.dob && (
-                          <span className="inline-flex items-center gap-1 text-white/80">
-                            <Calendar className="w-4 h-4 text-white/50" /> {fmtDate(u.dob, false)}
+                          <span className="inline-flex items-center gap-1 text-gray-600">
+                            <Calendar className="w-4 h-4 text-gray-400" /> {fmtDate(u.dob, false)}
                           </span>
                         )}
                       </div>
@@ -320,7 +308,7 @@ export default function UserListPage() {
                 </td>
 
                 {/* UUID */}
-                <td className="px-5 py-3"><code className="text-white/80">{u.id}</code></td>
+                <td className="px-5 py-3"><code className="text-gray-500">{u.id}</code></td>
 
                 {/* Trạng thái */}
                 <td className="px-5 py-3">
@@ -330,20 +318,20 @@ export default function UserListPage() {
                 </td>
 
                 {/* Ngày tạo */}
-                <td className="px-5 py-3 text-white/80">{fmtDate(u.createdAt)}</td>
+                <td className="px-5 py-3 text-gray-600">{fmtDate(u.createdAt)}</td>
 
                 {/* Đăng nhập gần nhất */}
-                <td className="px-5 py-3 text-white/80">{fmtDate(u.lastLogin)}</td>
+                <td className="px-5 py-3 text-gray-600">{fmtDate(u.lastLogin)}</td>
 
                 {/* Thiết bị gần nhất */}
                 <td className="px-5 py-3">
-                  <span className="inline-flex items-center gap-1.5 text-white/80">
-                    <Smartphone className="w-4 h-4 text-white/50" />
+                  <span className="inline-flex items-center gap-1.5 text-gray-600">
+                    <Smartphone className="w-4 h-4 text-gray-400" />
                     {u.lastDevice ?? '—'}
                   </span>
                 </td>
 
-                {/* Thao tác: dropdown */}
+                {/* Thao tác */}
                 <td className="px-5 py-3 text-center">
                   <ActionMenu
                     onView={() => console.log('Xem', u.id)}
@@ -356,7 +344,7 @@ export default function UserListPage() {
 
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={7} className="px-5 py-10 text-center text-white/60">
+                <td colSpan={7} className="px-5 py-10 text-center text-gray-500">
                   Không tìm thấy người dùng phù hợp.
                 </td>
               </tr>
