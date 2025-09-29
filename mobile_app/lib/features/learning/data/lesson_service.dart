@@ -8,24 +8,27 @@ class LessonService {
     return [
       Lesson(
         id: "1",
-        title: "Lesson 1: Greetings",
+        title: "Greetings",
         description: "Learn how to say hello and goodbye",
         level: "A1",
         progress: 0.3,
+        status: LessonStatus.unlocked,   // 👈 thêm
       ),
       Lesson(
         id: "2",
-        title: "Lesson 2: Numbers & Colors",
+        title: "Numbers & Colors",
         description: "Practice numbers and basic colors",
         level: "A1",
         progress: 0.7,
+        status: LessonStatus.completed,  // 👈 thêm
       ),
       Lesson(
         id: "3",
-        title: "Lesson 3: Family & Friends",
+        title: "Family & Friends",
         description: "Introduce your family and friends",
         level: "A2",
         progress: 0.1,
+        status: LessonStatus.locked,     // 👈 thêm
       ),
     ];
   }

@@ -167,7 +167,8 @@ class StarterPage extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(vertical: 14),
                         ),
                         onPressed: () {
-                          Navigator.pushNamed(context, LessonsScreen.routeName);
+                        // Navigator.pushNamed(context, LessonsScreen.routeName);
+                          Navigator.push(context, MaterialPageRoute(builder: (_) => const GalaxyMapScreen()));
                         },
                         child: const Row(
                           mainAxisAlignment: MainAxisAlignment.center,

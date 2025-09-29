@@ -2,13 +2,17 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import '../data/lesson_service.dart';
 import '../data/lesson_model.dart';
-import '../widgets/lesson_card.dart';            // vẫn dùng cho chỗ fallback nếu muốn
+import '../widgets/lesson_card.dart';           
 import 'lesson_detail_screen.dart';
-
-// 👉 Nếu đã tạo sẵn 3 widget này ở bước trước, import chúng:
 import '../widgets/starfield.dart';
 import '../widgets/orbit_ring.dart';
 import '../widgets/skill_planet.dart';
+import '../widgets/planet_fx.dart';
+import 'package:flutter/services.dart'; // để HapticFeedback (tuỳ thích)
+import 'daily_mission_screen.dart';
+
+
+
 
 class LessonsScreen extends StatefulWidget {
   static const String routeName = '/lessons';
@@ -18,6 +22,8 @@ class LessonsScreen extends StatefulWidget {
   @override
   State<LessonsScreen> createState() => _LessonsScreenState();
 }
+
+
 
 class _LessonsScreenState extends State<LessonsScreen> with TickerProviderStateMixin {
   final LessonService _service = LessonService();
@@ -113,6 +119,9 @@ class _LessonsScreenState extends State<LessonsScreen> with TickerProviderStateM
                     // mặt trời trang trí
                     _buildSun(orbitR),
 
+                    // Hành tinh Daily Mission (quỹ đạo riêng, quay nhanh hơn)
+                 // ..._buildDailyPlanet(orbitR * 0.75, _rotation.value),
+
                     // các hành tinh bài học
                     ..._buildLessonPlanets(orbitR, _rotation.value),
 
@@ -146,33 +155,131 @@ class _LessonsScreenState extends State<LessonsScreen> with TickerProviderStateM
     );
   }
 
-  List<Widget> _buildLessonPlanets(double r, double t) {
-    final widgets = <Widget>[];
-    for (var i = 0; i < _lessons.length; i++) {
-      final lesson = _lessons[i];
-      final angle = (2 * pi * i / _lessons.length) + (2 * pi * t);
-      final x = r * cos(angle);
-      final y = r * sin(angle);
-      final selected = _expandedId == lesson.id;
+ List<Widget> _buildLessonPlanets(double r, double t) {
+  final widgets = <Widget>[];
 
-      widgets.add(Transform.translate(
-        offset: Offset(x, y),
-        child: GestureDetector(
-          onTap: () => setState(() {
-            _expandedId = selected ? null : lesson.id;
-          }),
-         child: PlanetButton(
-            size: selected ? 68 : 52,
-            color: _accentColorFor(lesson),
-            label: lesson.title,
-            glow: selected,
-            onTap: () {}, // truyền callback nếu cần
+  for (var i = 0; i < _lessons.length; i++) {
+    final lesson = _lessons[i];
+    final angle = (2 * pi * i / _lessons.length) + (2 * pi * t);
+    final x = r * cos(angle);
+    final y = r * sin(angle);
+
+    // ——— xác định trạng thái ———
+    final status = _resolveStatus(i, lesson);
+    final selected = _expandedId == lesson.id;
+
+     widgets.add(
+  Transform.translate(
+    offset: Offset(x, y),
+    child: Tooltip(
+      // Tooltip khi chạm
+      message: "${lesson.title} – ${(lesson.progress * 100).round()}% completed",
+      triggerMode: TooltipTriggerMode.tap,
+      showDuration: const Duration(seconds: 2),
+      preferBelow: false,
+      decoration: BoxDecoration(
+        color: const Color(0xFF141C34),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.white24),
+      ),
+      textStyle: const TextStyle(color: Colors.white, fontSize: 12),
+      child: PlanetFX(
+        expanded: selected, // 👈 khi được chọn sẽ rung + ripple
+        child: PlanetButton(
+          size: selected ? 68 : 52,
+          color: _accentColorFor(lesson),
+          label: lesson.title,
+          glow: selected || status == LessonStatus.completed,
+          status: status,
+          progress: lesson.progress,
+          onTap: () {
+            if (status == LessonStatus.locked) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Bài này chưa mở khóa. Hoàn thành bài trước để mở!')),
+              );
+              return;
+            }
+            HapticFeedback.selectionClick(); // rung nhẹ cảm giác chạm
+            setState(() {
+              _expandedId = selected ? null : lesson.id;
+            });
+          },
+        ),
+      ),
+    ),
+  ),
+);
+
+
+  }
+  return widgets;
+}
+
+LessonStatus _resolveStatus(int idx, Lesson lesson) {
+  // Completed nếu progress >= 1
+  if ((lesson.progress).clamp(0.0, 1.0) >= 1.0) return LessonStatus.completed;
+
+  // Locked nếu bài trước chưa completed (trừ bài đầu)
+  if (idx > 0) {
+    final prev = _lessons[idx - 1];
+    if ((prev.progress).clamp(0.0, 1.0) < 1.0) {
+      return LessonStatus.locked;
+    }
+  }
+
+  // Còn lại là unlocked
+  return LessonStatus.unlocked;
+}
+
+List<Widget> _buildDailyPlanet(double r, double t) {
+  // quay nhanh gấp 2
+  final angle = (2 * pi * t * 2); // tốc độ *2
+  final x = r * cos(angle);
+  final y = r * sin(angle);
+
+  final color = const Color.fromARGB(255, 255, 179, 1); // vàng nổi bật
+  final selected = _expandedId == '__daily__';
+
+  return [
+    Transform.translate(
+      offset: Offset(x, y),
+      child: Tooltip(
+        message: "Daily Mission – tap để mở",
+        triggerMode: TooltipTriggerMode.tap,
+        showDuration: const Duration(seconds: 2),
+        decoration: BoxDecoration(
+          color: const Color(0xFF141C34),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: Colors.white24),
+        ),
+        textStyle: const TextStyle(color: Colors.white, fontSize: 12),
+        child: PlanetFX(
+          expanded: selected,
+          // celebrate: true, // nếu muốn luôn có ripple/firework khi mở
+          child: PlanetButton(
+            size: selected ? 72 : 56,
+            color: color,
+            label: "Daily",
+            glow: true, // luôn sáng để nổi
+            status: LessonStatus.unlocked,
+            progress: 0, // daily không có % cố định (tuỳ bạn muốn hiển thị)
+            onTap: () {
+              setState(() => _expandedId = '__daily__'); // cho hiệu ứng expand
+              // chuyển ngay sang màn daily
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const DailyMissionScreen()),
+              ).then((_) {
+                // thu lại sau khi trở về
+                if (mounted) setState(() => _expandedId = null);
+              });
+            },
           ),
         ),
-      ));
-    }
-    return widgets;
-  }
+      ),
+    ),
+  ];
+}
+
 
   List<Widget> _buildSkillOrbitAndPlanets(double r) {
     final lesson = _lessons.firstWhere((e) => e.id == _expandedId);
