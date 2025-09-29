@@ -1,5 +1,7 @@
+// lib/features/auth/starter/starter_page.dart
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../learning/learning.dart';
 
 class StarterPage extends StatelessWidget {
   const StarterPage({super.key});
@@ -37,6 +39,7 @@ class StarterPage extends StatelessWidget {
                 ),
               ),
             ),
+
             // Card vàng
             Align(
               alignment: Alignment.bottomCenter,
@@ -78,6 +81,7 @@ class StarterPage extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 20),
+
                     // Dots
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -95,7 +99,8 @@ class StarterPage extends StatelessWidget {
                       }),
                     ),
                     const SizedBox(height: 20),
-                    // Buttons
+
+                    // Buttons (Register / Login)
                     Row(
                       children: [
                         Expanded(
@@ -106,13 +111,11 @@ class StarterPage extends StatelessWidget {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(24),
                               ),
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 14),
+                              padding: const EdgeInsets.symmetric(vertical: 14),
                             ),
                             onPressed: () {
-  Navigator.pushReplacementNamed(context, '/messaging');
-},
-
+                              Navigator.pushReplacementNamed(context, '/messaging');
+                            },
                             child: const Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -132,8 +135,7 @@ class StarterPage extends StatelessWidget {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(24),
                               ),
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 14),
+                              padding: const EdgeInsets.symmetric(vertical: 14),
                               elevation: 0,
                             ),
                             onPressed: () {},
@@ -148,6 +150,34 @@ class StarterPage extends StatelessWidget {
                           ),
                         ),
                       ],
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    // ✅ Nút bắt đầu học tiếng Anh (đi lessons)
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blueAccent,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(24),
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                        ),
+                        onPressed: () {
+                          Navigator.pushNamed(context, LessonsScreen.routeName);
+                        },
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text('Bắt đầu học tiếng Anh'),
+                            SizedBox(width: 6),
+                            Icon(Icons.school, size: 18),
+                          ],
+                        ),
+                      ),
                     ),
                   ],
                 ),

@@ -52,3 +52,6 @@ logs/
 test-output/
 coverage/
 node_modules
+
+**/generated_plugin_registrant.*
+**/generated_plugins.cmake
