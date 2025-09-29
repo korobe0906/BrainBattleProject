@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { Download, UserPlus } from 'lucide-react'; // thêm icon UserPlus
+import { Download, UserPlus } from 'lucide-react';
 
 // Thông tin tiêu đề & mô tả cho từng trang
 const thongTinTrang: Record<string, { tieuDe: string; moTa: string }> = {
@@ -27,16 +27,17 @@ const thongTinTrang: Record<string, { tieuDe: string; moTa: string }> = {
 
 export default function Header() {
   const duongDan = usePathname();
-  const hienTai = thongTinTrang[duongDan] || { tieuDe: 'Trang không xác định', moTa: '' };
+  const hienTai =
+    thongTinTrang[duongDan] || { tieuDe: 'Trang không xác định', moTa: '' };
+
   const laDashboard = duongDan === '/admin';
   const laDanhSachNguoiHoc = duongDan === '/admin/users/learners';
 
   return (
     <header
       className="w-full px-6 py-4
-                 bg-gradient-to-r from-[#1A1D24] to-[#22252C]
-                 border-b border-white/5
-                 text-[#E8EAF0] flex items-center justify-between
+                 bg-white border-b border-gray-200
+                 text-gray-900 flex items-center justify-between
                  sticky top-0 z-40"
     >
       {/* Bên trái: Tiêu đề */}
@@ -45,7 +46,11 @@ export default function Header() {
           {hienTai.tieuDe}
         </h1>
         {hienTai.moTa && (
-          <p className="text-[13px] text-[#FFD84D] mt-0.5 truncate">
+          <p
+            className="text-[13px] mt-0.5 truncate
+                       bg-gradient-to-r from-pink-500 via-pink-400 to-purple-500
+                       bg-clip-text text-transparent font-medium"
+          >
             {hienTai.moTa}
           </p>
         )}
@@ -57,10 +62,9 @@ export default function Header() {
           <button
             type="button"
             className="px-4 py-2 rounded-full
-                       bg-white/10 text-white/90
-                       border border-white/10
-                       hover:bg-white/15 hover:border-white/20
-                       transition text-sm"
+                       bg-pink-100 text-pink-600 font-medium
+                       border border-pink-200
+                       hover:bg-pink-200 transition text-sm"
           >
             Live Data
           </button>
@@ -68,11 +72,9 @@ export default function Header() {
           <button
             type="button"
             className="inline-flex items-center gap-2
-                       px-4 py-2 rounded-xl
-                       bg-[#FFD84D] text-black font-semibold
-                       shadow-[0_6px_20px_rgba(255,216,77,0.25)]
-                       hover:bg-[#FFE169]
-                       transition text-sm"
+                       px-4 py-2 rounded-xl text-white font-semibold
+                       bg-gradient-to-r from-pink-400 via-pink-500 to-purple-500
+                       shadow-sm hover:opacity-90 transition text-sm"
           >
             <Download className="w-4 h-4" />
             Xuất báo cáo
@@ -83,11 +85,9 @@ export default function Header() {
           <button
             type="button"
             className="inline-flex items-center gap-2
-                       px-4 py-2 rounded-xl
-                       bg-[#FFD84D] text-black font-semibold
-                       shadow-[0_6px_20px_rgba(255,216,77,0.25)]
-                       hover:bg-[#FFE169]
-                       transition text-sm"
+                       px-4 py-2 rounded-xl text-white font-semibold
+                       bg-gradient-to-r from-pink-400 via-pink-500 to-purple-500
+                       shadow-sm hover:opacity-90 transition text-sm"
           >
             <UserPlus className="w-4 h-4" />
             Thêm người dùng
@@ -95,18 +95,13 @@ export default function Header() {
         </div>
       ) : (
         <div className="relative w-10 h-10">
-          <div className="absolute inset-0 rotate-[18deg]">
-            <Image
-              src="/images/frame_logo.png"
-              alt="Logo BrainBattle"
-              fill
-              className="object-contain"
-              priority
-            />
-          </div>
-          <div className="absolute inset-0 -rotate-[18deg] flex items-center justify-center text-white text-lg font-extrabold">
-            B
-          </div>
+          <Image
+            src="/images/brainbattle_logo_really_pink.png"
+            alt="Logo BrainBattle"
+            fill
+            className="object-contain"
+            priority
+          />
         </div>
       )}
     </header>
