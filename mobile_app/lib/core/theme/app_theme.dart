@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'palette.dart';
 
-ThemeData bbDarkTheme()  => ThemeData(useMaterial3: true, colorScheme: BBPalette.scheme(Brightness.dark));
-ThemeData bbLightTheme() => ThemeData(useMaterial3: true, colorScheme: BBPalette.scheme(Brightness.light));
+ThemeData bbDarkTheme()  =>
+    ThemeData(useMaterial3: true, colorScheme: BBPalette.scheme(Brightness.dark));
+
+ThemeData bbLightTheme() =>
+    ThemeData(useMaterial3: true, colorScheme: BBPalette.scheme(Brightness.light));
 
 class BBColors {
   static const Color yellow = Color(0xFFF1C40F);
@@ -11,4 +14,3 @@ class BBColors {
   static const Color textPrimary = Colors.white;
   static const Color textSecondary = Color(0xFFBFC7CF);
 }
-
