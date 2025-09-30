@@ -5,6 +5,7 @@ import 'features/auth/starter/starter_page.dart';
 import 'features/messaging/ui/conversations_page.dart';
 import 'features/learning/learning.dart';
 import 'features/learning/ui/galaxy_map_screen.dart';
+import 'features/community/community_shell.dart';
 
 class BrainBattleApp extends StatelessWidget {
   const BrainBattleApp({super.key});
@@ -20,7 +21,7 @@ class BrainBattleApp extends StatelessWidget {
       home: const SplashPage(), // build Splash ngay, không qua tra cứu route
       routes: {
         StarterPage.routeName: (_) => const StarterPage(),
-        ConversationsPage.routeName: (_) => const ConversationsPage(),
+        CommunityShell.routeName: (_) => const CommunityShell(), // ok
         LessonsScreen.routeName: (_) => const LessonsScreen(),
       },
       onUnknownRoute: (_) =>

@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../learning/learning.dart';
 import '../../learning/ui/galaxy_map_screen.dart';
+import '../../community/community_shell.dart';
+
 
 class StarterPage extends StatelessWidget {
   const StarterPage({super.key});
@@ -146,10 +148,8 @@ class StarterPage extends StatelessWidget {
                               padding: const EdgeInsets.symmetric(vertical: 14),
                             ),
                             onPressed: () {
-                              Navigator.pushReplacementNamed(
-                                context,
-                                '/messaging',
-                              );
+                              Navigator.pushNamed(context, CommunityShell.routeName);
+
                             },
                             child: const Row(
                               mainAxisAlignment: MainAxisAlignment.center,
