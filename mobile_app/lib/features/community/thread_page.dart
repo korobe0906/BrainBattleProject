@@ -1,3 +1,17 @@
+import 'package:flutter/material.dart';
+
+// theme & tokens
+import '../../core/theme/palette.dart';
+import '../../core/theme/tokens.dart';
+
+// widgets nội bộ
+import '../../core/widgets/bb_card.dart';
+import '../../core/widgets/bb_button.dart';
+
+// BattleInviteCard (đúng path + NHỚ ; ở cuối)
+import '../../features/community/battle_invite_card.dart';
+
+
 class ThreadPage extends StatefulWidget {
   final String title;
   const ThreadPage({super.key, required this.title});
@@ -163,6 +177,18 @@ class _Ribbon extends StatelessWidget {
         border: Border.all(color: color, width: 1),
       ),
       child: Text(label, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w800)),
+    );
+  }
+}
+
+class _MockBattleLobby extends StatelessWidget {
+  const _MockBattleLobby();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Battle Lobby')),
+      body: const Center(child: Text('Battle module goes here…')),
     );
   }
 }
