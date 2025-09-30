@@ -1,3 +1,13 @@
+import 'package:flutter/material.dart';
+
+// theme & tokens
+import '../../core/theme/palette.dart';
+import '../../core/theme/tokens.dart';
+
+// widgets nội bộ
+import '../../core/widgets/bb_card.dart';
+
+
 class DMPage extends StatelessWidget {
   const DMPage({super.key});
   @override

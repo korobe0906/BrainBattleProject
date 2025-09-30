@@ -1,3 +1,14 @@
+import 'package:flutter/material.dart';
+
+// theme & tokens
+import '../../core/theme/palette.dart';
+import '../../core/theme/tokens.dart';
+
+// widgets nội bộ
+import '../../core/widgets/bb_card.dart';
+import '../../features/community/thread_page.dart';
+
+
 class RoomsPage extends StatelessWidget {
   const RoomsPage({super.key});
 

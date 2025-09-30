@@ -1,3 +1,12 @@
+import 'package:flutter/material.dart';
+
+// theme & tokens
+import '../../core/theme/palette.dart';
+import '../../core/theme/tokens.dart';
+
+import '../../features/community/battle_invite_card.dart';
+
+
 class PulsePage extends StatelessWidget {
   const PulsePage({super.key});
 
@@ -111,3 +120,15 @@ class _NeonOrbit extends StatelessWidget {
     );
   }
 }
+class _MockBattleLobby extends StatelessWidget {
+  const _MockBattleLobby();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(backgroundColor: Colors.transparent, title: const Text('Battle Lobby')),
+      body: const Center(child: Text('Battle module goes here…')),
+    );
+  }
+}
+

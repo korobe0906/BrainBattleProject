@@ -29,3 +29,22 @@ class BBShadows {
     ),
   ];
 }
+
+class BBTypo {
+  static TextStyle title(BuildContext ctx) =>
+      Theme.of(ctx).textTheme.titleLarge!.copyWith(
+        color: Theme.of(ctx).colorScheme.onBackground,
+        fontWeight: FontWeight.w700,
+      );
+
+  static TextStyle subtitle(BuildContext ctx) =>
+      Theme.of(ctx).textTheme.titleMedium!.copyWith(
+        color: Theme.of(ctx).colorScheme.onSurfaceVariant,
+        fontWeight: FontWeight.w600,
+      );
+
+  static TextStyle body(BuildContext ctx) =>
+      Theme.of(ctx).textTheme.bodyMedium!.copyWith(
+        color: Theme.of(ctx).colorScheme.onSurface,
+      );
+}
