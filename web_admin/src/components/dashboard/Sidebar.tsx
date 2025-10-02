@@ -186,20 +186,22 @@ export default function AdminSidebarHoverExpand() {
   return (
     <>
       <aside
-        ref={containerRef}
-        onMouseEnter={() => setExpanded(true)}
-        onMouseLeave={() => setExpanded(false)}
-        className={cn(
-          "h-screen flex flex-col bg-white/95 backdrop-blur",
-          "shadow-sm border border-gray-200",          // << thay vì border-r dày
-          sideWidth,
-          "[transition:width_.25s_ease]"
-        )}
-        style={{
-          borderTopRightRadius: 28,
-          borderBottomRightRadius: 28,
-        }}
-      >
+  ref={containerRef}
+  onMouseEnter={() => setExpanded(true)}
+  onMouseLeave={() => setExpanded(false)}
+  className={cn(
+    "h-full flex flex-col bg-white/95 backdrop-blur",
+    "shadow-sm border border-gray-200",
+    "overflow-y-auto",             
+    sideWidth,
+    "[transition:width_.25s_ease]"
+  )}
+  style={{
+    borderTopRightRadius: 28,
+    borderBottomRightRadius: 28,
+  }}
+>
+
 
         {/* Header */}
         <div className="p-4 border-b border-gray-200">
