@@ -35,11 +35,10 @@ export default function Header() {
 
   return (
     <header
-      className="w-full px-6 py-4
-                 bg-white border-b border-gray-200
-                 text-gray-900 flex items-center justify-between
-                 sticky top-0 z-40"
+      className="w-full px-6 py-4 bg-white border-b border-gray-100
+             text-gray-900 flex items-center justify-between sticky top-0 z-40"
     >
+
       {/* Bên trái: Tiêu đề */}
       <div className="min-w-0">
         <h1 className="text-[20px] md:text-[22px] font-semibold tracking-wide truncate">

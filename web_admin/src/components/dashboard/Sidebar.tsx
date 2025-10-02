@@ -175,7 +175,7 @@ export default function AdminSidebarHoverExpand() {
   const confirmLogout = () => {
     try {
       localStorage.removeItem("bb_demo_login");
-    } catch {}
+    } catch { }
     setShowLogout(false);
     router.push("/sign-in");
   };
@@ -190,17 +190,17 @@ export default function AdminSidebarHoverExpand() {
         onMouseEnter={() => setExpanded(true)}
         onMouseLeave={() => setExpanded(false)}
         className={cn(
-          "h-screen flex flex-col border-r border-gray-200 shadow-md bg-white/95 backdrop-blur",
+          "h-screen flex flex-col bg-white/95 backdrop-blur",
+          "shadow-sm border border-gray-200",          // << thay vì border-r dày
           sideWidth,
-          // smooth width animation
           "[transition:width_.25s_ease]"
         )}
         style={{
-          // subtle curved rail style
           borderTopRightRadius: 28,
           borderBottomRightRadius: 28,
         }}
       >
+
         {/* Header */}
         <div className="p-4 border-b border-gray-200">
           <div className="flex items-center gap-3">
@@ -289,7 +289,7 @@ export default function AdminSidebarHoverExpand() {
                               "relative flex items-center gap-2 px-2.5 py-2 rounded-lg transition",
                               "hover:bg-pink-50 hover:ring-1 hover:ring-pink-200/40",
                               active &&
-                                "bg-gradient-to-r from-pink-100 to-purple-100 text-pink-700 font-semibold ring-1 ring-pink-300"
+                              "bg-gradient-to-r from-pink-100 to-purple-100 text-pink-700 font-semibold ring-1 ring-pink-300"
                             )}
                           >
                             <child.icon className="w-4 h-4 text-gray-500" />
@@ -328,7 +328,7 @@ export default function AdminSidebarHoverExpand() {
                                   "flex items-center gap-2 rounded-lg px-2.5 py-2",
                                   "hover:bg-pink-50 hover:ring-1 hover:ring-pink-200/40",
                                   active &&
-                                    "bg-gradient-to-r from-pink-100 to-purple-100 text-pink-700 font-semibold ring-1 ring-pink-300"
+                                  "bg-gradient-to-r from-pink-100 to-purple-100 text-pink-700 font-semibold ring-1 ring-pink-300"
                                 )}
                               >
                                 <child.icon className="w-4 h-4 text-gray-500" />
@@ -354,7 +354,7 @@ export default function AdminSidebarHoverExpand() {
                     expanded ? "px-3 py-2.5 gap-3" : "px-2.5 py-2 gap-0",
                     "hover:bg-pink-50 hover:ring-1 hover:ring-pink-200/40",
                     activeTop &&
-                      "bg-gradient-to-r from-pink-100 to-purple-100 text-pink-700 font-semibold ring-1 ring-pink-300"
+                    "bg-gradient-to-r from-pink-100 to-purple-100 text-pink-700 font-semibold ring-1 ring-pink-300"
                   )}
                   aria-label={item.label}
                   title={!expanded ? item.label : undefined}
