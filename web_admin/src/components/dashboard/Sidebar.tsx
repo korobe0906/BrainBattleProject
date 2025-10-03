@@ -190,9 +190,8 @@ export default function AdminSidebarHoverExpand() {
   onMouseEnter={() => setExpanded(true)}
   onMouseLeave={() => setExpanded(false)}
   className={cn(
-    "h-full flex flex-col bg-white/95 backdrop-blur",
-    "shadow-sm border border-gray-200",
-    "overflow-y-auto",             
+    "h-screen flex flex-col bg-white/95 backdrop-blur",
+    "shadow-sm border border-gray-200",          // << thay vì border-r dày
     sideWidth,
     "[transition:width_.25s_ease]"
   )}
@@ -201,6 +200,7 @@ export default function AdminSidebarHoverExpand() {
     borderBottomRightRadius: 28,
   }}
 >
+
 
 
         {/* Header */}

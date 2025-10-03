@@ -5,7 +5,7 @@ import { Eye, Target, Award, MessageCircle } from 'lucide-react';
 
 export default function DashboardPage() {
   return (
-    <div className="p-6 space-y-6 bg-gray-50 min-h-screen">
+<div className="space-y-6">
       {/* Grid thống kê */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
         <StatCard
