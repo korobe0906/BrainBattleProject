@@ -4,12 +4,12 @@ import '../../../core/theme/app_theme.dart';
 import '../../learning/learning.dart';
 import '../../learning/ui/galaxy_map_screen.dart';
 import '../../community/community_shell.dart';
-
+import '../../shortvideo/shortvideo.dart';
 
 class StarterPage extends StatelessWidget {
   const StarterPage({super.key});
   static const routeName = '/starter';
-
+  
   // Màu chữ giống Splash
   static const _pinkBrain = Color(0xFFFF8FAB);
   static const _pinkBattle = Color(0xFFF3B4C3);
@@ -219,7 +219,7 @@ class StarterPage extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) => const GalaxyMapScreen(),
+                                builder: (_) => const ShortVideoShell(), // ⬅️ thay vì GalaxyMapScreen
                               ),
                             );
                           },

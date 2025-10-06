@@ -6,6 +6,7 @@ import 'features/messaging/ui/conversations_page.dart';
 import 'features/learning/learning.dart';
 import 'features/learning/ui/galaxy_map_screen.dart';
 import 'features/community/community_shell.dart';
+import 'features/shortvideo/shortvideo.dart';
 
 class BrainBattleApp extends StatelessWidget {
   const BrainBattleApp({super.key});
@@ -23,6 +24,7 @@ class BrainBattleApp extends StatelessWidget {
         StarterPage.routeName: (_) => const StarterPage(),
         CommunityShell.routeName: (_) => const CommunityShell(), // ok
         LessonsScreen.routeName: (_) => const LessonsScreen(),
+        ShortVideoShell.routeName: (c) => const ShortVideoShell(),
       },
       onUnknownRoute: (_) =>
           MaterialPageRoute(builder: (_) => const StarterPage()),
