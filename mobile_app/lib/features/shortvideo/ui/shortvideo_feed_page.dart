@@ -5,6 +5,9 @@ import '../widgets/shortvideo_player.dart';
 import '../widgets/top_tabs.dart';
 import '../widgets/right_rail.dart';
 import '../widgets/bottom_bar.dart';
+import '../widgets/comment_sheet.dart'; 
+import 'shorts_search_page.dart';
+import 'shorts_recorder_page.dart';
 
 class ShortVideoFeedPage extends StatefulWidget {
   const ShortVideoFeedPage({super.key});
@@ -62,30 +65,50 @@ class _ShortVideoFeedPageState extends State<ShortVideoFeedPage> {
       );
     });
   }
-
-  void _showCommentsSheet(ShortVideo v) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: const Color(0xFF111111),
-      isScrollControlled: true,
-      builder: (c) => DraggableScrollableSheet(
-        initialChildSize: 0.7,
-        minChildSize: 0.5,
-        maxChildSize: 0.95,
-        expand: false,
-        builder: (_, controller) => ListView.builder(
-          controller: controller,
-          itemCount: 18,
-          itemBuilder: (_, i) => ListTile(
-            leading: const CircleAvatar(child: Icon(Icons.person)),
-            title: Text('User $i', style: const TextStyle(color: Colors.white)),
-            subtitle: const Text('Very cool clip! 🔥',
-                style: TextStyle(color: Colors.white70)),
-          ),
-        ),
+void _openComments(ShortVideo v, int index) async {
+  await showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder: (_) => SizedBox(
+      height: MediaQuery.of(context).size.height * 0.92,
+      child: CommentSheet(
+        videoId: v.id,
+        initialCount: v.comments,
+        onCountChanged: (newCount) {
+          setState(() {
+            // cập nhật lại số comment hiển thị trên feed
+            _items[index] = v.copyWith(comments: newCount);
+          });
+        },
       ),
-    );
-  }
+    ),
+  );
+}
+
+  // void _showCommentsSheet(ShortVideo v) {
+  //   showModalBottomSheet(
+  //     context: context,
+  //     backgroundColor: const Color(0xFF111111),
+  //     isScrollControlled: true,
+  //     builder: (c) => DraggableScrollableSheet(
+  //       initialChildSize: 0.7,
+  //       minChildSize: 0.5,
+  //       maxChildSize: 0.95,
+  //       expand: false,
+  //       builder: (_, controller) => ListView.builder(
+  //         controller: controller,
+  //         itemCount: 18,
+  //         itemBuilder: (_, i) => ListTile(
+  //           leading: const CircleAvatar(child: Icon(Icons.person)),
+  //           title: Text('User $i', style: const TextStyle(color: Colors.white)),
+  //           subtitle: const Text('Very cool clip! 🔥',
+  //               style: TextStyle(color: Colors.white70)),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 
   void _seekTo(int index, double valueSec) {
     final c = _controllers[index];
@@ -138,12 +161,21 @@ class _ShortVideoFeedPageState extends State<ShortVideoFeedPage> {
                       ),
                     ),
                   ),
-                  const Positioned(
+                  Positioned(
                     top: 0,
                     left: 0,
                     right: 0,
-                    child: TopTabs(active: 'Đề xuất'),
+                    child: TopTabs(
+                      active: 'Đề xuất',
+                      onSearchTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const ShortsSearchPage()),
+                        );
+                      },
+                    ),
                   ),
+
                   // Banner + bubble (demo)
                   Positioned(
                     left: 12,
@@ -186,7 +218,7 @@ class _ShortVideoFeedPageState extends State<ShortVideoFeedPage> {
                       onAvatarTap: () {},
                       onUploadTap: () {}, // mở màn hình upload
                       onLike: () => _toggleLike(index),
-                      onComment: () => _showCommentsSheet(item),
+                      onComment: () => _openComments(item, index),
                       onSave: () {},
                       onShare: () {},
                     ),
@@ -252,9 +284,15 @@ class _ShortVideoFeedPageState extends State<ShortVideoFeedPage> {
             bottom: 0,
             child: BottomShortsBar(
               inboxBadge: 8,
-              onTap: (i) {
-                // TODO: điều hướng các tab dưới
-              },
+             onTap: (i) {
+                  if (i == 2) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const ShortsRecorderPage()),
+                    );
+                  }
+                },
+
             ),
           ),
         ],
