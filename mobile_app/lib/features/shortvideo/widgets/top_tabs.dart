@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 
 class TopTabs extends StatelessWidget {
   final String active; // 'De xuat', 'Live', ...
-  const TopTabs({super.key, this.active = 'Đề xuất'});
+final VoidCallback? onSearchTap;
+  const TopTabs({super.key, this.active = 'Đề xuất', this.onSearchTap});
+
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +52,7 @@ class TopTabs extends StatelessWidget {
             ),
             const SizedBox(width: 8),
             IconButton(
-              onPressed: () {}, // TODO: mở search
+                onPressed: onSearchTap,      
               icon: const Icon(Icons.search, color: Colors.white),
             ),
           ],
