@@ -1,10 +1,19 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_theme.dart';
 import '../battle_routes.dart';
+import '../models/battle_stage.dart';
+import '../widgets/battle_3v3/entry/battle_3v3_header.dart';
+import '../widgets/battle_3v3/entry/role_card.dart';
+import '../widgets/battle_3v3/entry/team_battle_info_card.dart';
+import '../widgets/battle_3v3/entry/team_mode_explanation_card.dart';
+import '../widgets/battle_3v3/entry/team_preview_section.dart';
+import '../widgets/battle_3v3/entry/team_room_code_card.dart';
+import '../widgets/battle_3v3/entry/team_tabs.dart';
 
 class Battle3v3EntryPage extends StatefulWidget {
   const Battle3v3EntryPage({super.key});
   static const routeName = BattleRoutes.v3Entry;
+  static const stage = BattleStage.entry;
 
   @override
   State<Battle3v3EntryPage> createState() => _Battle3v3EntryPageState();
@@ -30,74 +39,32 @@ class _Battle3v3EntryPageState extends State<Battle3v3EntryPage>
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Scaffold(
       backgroundColor: BBColors.darkBg,
-      appBar: AppBar(
-        backgroundColor: BBColors.darkBg,
-        elevation: 0,
-        centerTitle: true,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
-        ),
-        title: const Text(
-          '3v3 Team Battle',
-          style: TextStyle(fontWeight: FontWeight.w600),
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-
-        // ---- NEW TABBAR STYLE ----
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(52),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
-            child: Container(
-              height: 40,
-              decoration: BoxDecoration(
-                color: const Color(0xFF141428),
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: TabBar(
-                controller: _tab,
-                indicator: BoxDecoration(
-                  color: theme.colorScheme.primary.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                    color: theme.colorScheme.primary,
-                    width: 1.2,
-                  ),
-                ),
-                indicatorSize: TabBarIndicatorSize.tab,
-                labelColor: Colors.white,
-                unselectedLabelColor: Colors.white70,
-                labelStyle: const TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                ),
-                unselectedLabelStyle: const TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                ),
-                tabs: const [
-                  Tab(text: 'Create team'),
-                  Tab(text: 'Join by code'),
-                ],
+      body: SafeArea(
+        bottom: false,
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+              child: Battle3v3Header(
+                onBack: () => Navigator.of(context).pop(),
               ),
             ),
-          ),
+            const SizedBox(height: 16),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: TeamTabs(controller: _tab),
+            ),
+            const SizedBox(height: 16),
+            Expanded(
+              child: TabBarView(
+                controller: _tab,
+                children: [_buildCreateTab(context), _buildJoinTab(context)],
+              ),
+            ),
+          ],
         ),
-      ),
-
-      body: TabBarView(
-        controller: _tab,
-        children: [
-          _buildCreateTab(context),
-          _buildJoinTab(context),
-        ],
       ),
     );
   }
@@ -107,47 +74,99 @@ class _Battle3v3EntryPageState extends State<Battle3v3EntryPage>
   // ------------------------------------------------------------------------
 
   Widget _buildCreateTab(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          const TeamModeExplanationCard(),
+          const SizedBox(height: 24),
           const Text(
-            'A 3v3 battle always includes all three skills: Listening, Reading, and Writing.\nEach player must pick exactly one unique role.',
-            style: TextStyle(color: Colors.white70, fontSize: 12, height: 1.35),
+            'Choose Your Role',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 15.5,
+              fontWeight: FontWeight.w700,
+            ),
           ),
-
-          const Spacer(),
-
-          // ---- CREATE TEAM BUTTON ----
+          const SizedBox(height: 16),
+          const RoleCard(
+            title: 'Grammar',
+            description: 'Test your grammar skills with sentence challenges.',
+            icon: Icons.spellcheck_rounded,
+            badgeText: '10 questions',
+          ),
+          const SizedBox(height: 12),
+          const RoleCard(
+            title: 'Listening',
+            description:
+                'Test your listening skills by answering audio questions.',
+            icon: Icons.headphones_rounded,
+            badgeText: '10 questions',
+          ),
+          const SizedBox(height: 12),
+          const RoleCard(
+            title: 'Vocabulary',
+            description:
+                'Test your vocabulary knowledge in different contexts.',
+            icon: Icons.menu_book_rounded,
+            badgeText: '10 questions',
+          ),
+          const SizedBox(height: 24),
+          const TeamBattleInfoCard(),
+          const SizedBox(height: 24),
+          const TeamPreviewSection(),
+          const SizedBox(height: 24),
           SizedBox(
             width: double.infinity,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: theme.colorScheme.primary,
-                padding: const EdgeInsets.symmetric(vertical: 15),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(22),
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(999),
+                gradient: const LinearGradient(
+                  colors: [Color(0xFFF57AA7), Color(0xFFF76095)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                 ),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFFFF7EB6).withOpacity(0.45),
+                    blurRadius: 22,
+                    offset: const Offset(0, 10),
+                  ),
+                ],
               ),
-              onPressed: () {
-                Navigator.of(context).pushNamed(
-                  BattleRoutes.v3Lobby,
-                  arguments: {
-                    'roomCode': 'TEAM1',
-                    'isHost': true,
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(999),
+                  onTap: () {
+                    Navigator.of(context).pushNamed(
+                      BattleRoutes.v3Matchmaking,
+                      arguments: {'roomCode': 'TEAM1', 'isHost': true},
+                    );
                   },
-                );
-              },
-              child: const Text(
-                'Create team room',
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 16),
+                    child: Center(
+                      child: Text(
+                        'Create Team Room',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xFF1A0B1B),
+                          fontSize: 15.5,
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
               ),
+            ),
+          ),
+          const SizedBox(height: 8),
+          const Center(
+            child: Text(
+              'Invite teammates or share the room code.',
+              style: TextStyle(color: Colors.white54, fontSize: 13),
             ),
           ),
         ],
@@ -160,79 +179,78 @@ class _Battle3v3EntryPageState extends State<Battle3v3EntryPage>
   // ------------------------------------------------------------------------
 
   Widget _buildJoinTab(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'Enter room code',
+            'Enter Room Code',
             style: TextStyle(
-              color: Colors.white70,
-              fontSize: 13,
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
             ),
           ),
           const SizedBox(height: 8),
-
-          TextField(
-            controller: _codeCtrl,
-            style: const TextStyle(color: Colors.white),
-            textCapitalization: TextCapitalization.characters,
-            decoration: InputDecoration(
-              hintText: 'e.g. TEAM1',
-              hintStyle: const TextStyle(color: Colors.white30),
-              filled: true,
-              fillColor: const Color(0xFF141428),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(14),
-                borderSide: BorderSide.none,
-              ),
-              contentPadding:
-                  const EdgeInsets.symmetric(vertical: 12, horizontal: 14),
-            ),
+          const Text(
+            'Join a team room created by your teammates.',
+            style: TextStyle(color: Colors.white54, fontSize: 13),
           ),
-
+          const SizedBox(height: 24),
+          TeamRoomCodeCard(controller: _codeCtrl),
           const SizedBox(height: 8),
           const Text(
             'You will automatically be placed in Team A or Team B depending on available slots.',
-            style: TextStyle(
-              color: Colors.white54,
-              fontSize: 11,
-              height: 1.3,
-            ),
+            style: TextStyle(color: Colors.white54, fontSize: 13),
           ),
-
-          const Spacer(),
-
-          // ---- JOIN TEAM BUTTON ----
+          const SizedBox(height: 24),
           SizedBox(
             width: double.infinity,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: theme.colorScheme.primary,
-                padding: const EdgeInsets.symmetric(vertical: 15),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(22),
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(999),
+                gradient: const LinearGradient(
+                  colors: [Color(0xFFF57AA7), Color(0xFFF76095)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                 ),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFFFF7EB6).withOpacity(0.42),
+                    blurRadius: 22,
+                    offset: const Offset(0, 10),
+                  ),
+                ],
               ),
-              onPressed: () {
-                Navigator.of(context).pushNamed(
-                  BattleRoutes.v3Lobby,
-                  arguments: {
-                    'roomCode': _codeCtrl.text.trim().isEmpty
-                        ? 'TEAM'
-                        : _codeCtrl.text.trim().toUpperCase(),
-                    'isHost': false,
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(999),
+                  onTap: () {
+                    Navigator.of(context).pushNamed(
+                      BattleRoutes.v3Matchmaking,
+                      arguments: {
+                        'roomCode': _codeCtrl.text.trim().isEmpty
+                            ? 'TEAM'
+                            : _codeCtrl.text.trim().toUpperCase(),
+                        'isHost': false,
+                      },
+                    );
                   },
-                );
-              },
-              child: const Text(
-                'Join team room',
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 16),
+                    child: Center(
+                      child: Text(
+                        'Join Team Room',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xFF1A0B1B),
+                          fontSize: 15.5,
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ),

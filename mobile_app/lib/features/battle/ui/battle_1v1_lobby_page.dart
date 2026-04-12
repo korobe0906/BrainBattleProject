@@ -1,275 +1,264 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'dart:async';
 import '../../../core/theme/app_theme.dart';
 import '../battle_routes.dart';
+import '../models/battle_stage.dart';
+import '../widgets/battle_1v1/lobby/battle_lobby_header.dart';
+import '../widgets/battle_1v1/lobby/battle_mode_panel.dart';
+import '../widgets/battle_1v1/lobby/lobby_action_button.dart';
+import '../widgets/battle_1v1/lobby/player_slot.dart';
+import '../widgets/battle_1v1/lobby/room_code_panel.dart';
 
-class Battle1v1LobbyPage extends StatelessWidget {
+class Battle1v1LobbyPage extends StatefulWidget {
   final String roomCode;
   final String battleType;
   final bool isHost;
+  final String opponentName;
 
   const Battle1v1LobbyPage({
     super.key,
     required this.roomCode,
     required this.battleType,
     required this.isHost,
+    required this.opponentName,
   });
   static const routeName = BattleRoutes.v1Lobby;
+  static const stage = BattleStage.lobby;
 
-  String _battleTypeLabel() {
-    switch (battleType) {
+  @override
+  State<Battle1v1LobbyPage> createState() => _Battle1v1LobbyPageState();
+}
+
+class _Battle1v1LobbyPageState extends State<Battle1v1LobbyPage> {
+  bool _myReady = false;
+  bool _opponentReady = false;
+  Timer? _presenceTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _myReady = widget.isHost;
+    _presenceTimer = Timer(const Duration(seconds: 3), () {
+      if (!mounted) return;
+      setState(() {
+        _opponentReady = true;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _presenceTimer?.cancel();
+    super.dispose();
+  }
+
+  String _battleTypeLabel(String type) {
+    switch (type) {
       case 'LISTENING':
         return 'Listening battle';
-      case 'READING':
-        return 'Reading battle';
-      case 'WRITING':
-        return 'Writing battle';
+      case 'VOCABULARY':
+        return 'Vocabulary battle';
+      case 'GRAMMAR':
+        return 'Grammar battle';
       case 'MIXED':
-        return 'Mixed (Listening + Reading + Writing)';
+        return 'Mixed (Listening + Vocabulary + Grammar)';
       default:
         return 'Mode set by host';
     }
   }
 
+  Future<void> _copyCode() async {
+    await Clipboard.setData(ClipboardData(text: widget.roomCode.toUpperCase()));
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Room code copied'),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
+  bool get _canGoMatchFound => _myReady && _opponentReady;
+
+  void _goMatchFound() {
+    Navigator.of(context).pushReplacementNamed(
+      BattleRoutes.v1MatchFound,
+      arguments: {
+        'battleType': widget.battleType,
+        'opponentName': widget.opponentName,
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    Widget playerSlot(String name, {bool me = false, bool waiting = false}) {
-      return Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(18),
-          gradient: const LinearGradient(
-            colors: [Color(0xFF151528), Color(0xFF10101E)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          border: Border.all(
-            color: me ? theme.colorScheme.primary : Colors.white12,
-            width: 1.2,
-          ),
-        ),
-        child: Row(
-          children: [
-            CircleAvatar(
-              radius: 20,
-              backgroundColor:
-                  me ? theme.colorScheme.primary : const Color(0xFF2B1640),
-              child: const Icon(Icons.person, color: Colors.white),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                waiting ? 'Waiting for opponent…' : name,
-                style: TextStyle(
-                  color: waiting ? Colors.white38 : Colors.white,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-            if (me)
-              const Text(
-                'You',
-                style: TextStyle(color: Colors.white54, fontSize: 11),
-              ),
-          ],
-        ),
-      );
-    }
+    final actionEnabled = widget.isHost ? _canGoMatchFound : true;
 
     return Scaffold(
       backgroundColor: BBColors.darkBg,
-      appBar: AppBar(
-        backgroundColor: BBColors.darkBg,
-        elevation: 0,
-        centerTitle: true,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
-        ),
-        title: const Text(
-          '1v1 Lobby',
-          style: TextStyle(fontWeight: FontWeight.w600),
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.close_rounded, size: 20),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
+      appBar: BattleLobbyHeader(
+        onClose: () => Navigator.of(context).pop(),
       ),
-      body: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // ---- ROOM CODE PANEL ----
-            Container(
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(18),
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF1E1630), Color(0xFF141428)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                border: Border.all(color: Colors.white12, width: 1),
-              ),
-              child: Row(
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+      body: SafeArea(
+        bottom: false,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+          child: Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      const Text(
-                        'Room code',
-                        style: TextStyle(color: Colors.white70, fontSize: 12),
+                      // Battle Mode Panel - Top section with visual emphasis
+                      const SizedBox(height: 8),
+                      BattleModePanel(
+                        battleType: widget.battleType,
+                        mapBattleTypeLabel: _battleTypeLabel,
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        roomCode.toUpperCase(),
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 1.6,
-                          fontSize: 18,
+                      const SizedBox(height: 32),
+
+                      // Central VS Section - Main visual focus
+                      const Text(
+                        'Players',
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: PlayerSlot(
+                              name: 'You',
+                              isYou: true,
+                              isReady: _myReady,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            child: Column(
+                              children: [
+                                Text(
+                                  'VS',
+                                  style: TextStyle(
+                                    color: Colors.white.withOpacity(0.5),
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w700,
+                                    letterSpacing: 1,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  _canGoMatchFound ? 'READY' : 'WAIT',
+                                  style: TextStyle(
+                                    color: _canGoMatchFound
+                                        ? const Color(0xFF3BFFB0)
+                                        : Colors.white54,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w700,
+                                    letterSpacing: 0.6,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                            child: PlayerSlot(
+                              name: widget.opponentName,
+                              waiting: widget.opponentName.isEmpty,
+                              isReady: _opponentReady,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 32),
+
+                      // Room Code Section - Secondary importance
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Room Details',
+                          style: TextStyle(
+                            color: Colors.white.withOpacity(0.6),
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      RoomCodePanel(
+                        roomCode: widget.roomCode,
+                        onCopy: _copyCode,
+                      ),
+                      const SizedBox(height: 8),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          widget.isHost
+                              ? 'Share this code so your opponent can join.'
+                              : 'You have successfully joined the duel.',
+                          style: const TextStyle(
+                            color: Colors.white54,
+                            fontSize: 11,
+                          ),
                         ),
                       ),
                     ],
                   ),
-                  const Spacer(),
-                  IconButton(
-                    onPressed: () {
-                      // TODO: copy to clipboard
-                    },
-                    icon: const Icon(
-                      Icons.copy_rounded,
-                      size: 18,
-                      color: Colors.white70,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 12),
-            const Text(
-              'Share this code so your opponent can join the duel.',
-              style: TextStyle(color: Colors.white54, fontSize: 11),
-            ),
-
-            const SizedBox(height: 22),
-
-            // ---- PLAYER SLOT ----
-            Row(
-              children: [
-                Expanded(child: playerSlot('You', me: true)),
-                const SizedBox(width: 12),
-                Expanded(child: playerSlot('', waiting: true)),
-              ],
-            ),
-
-            const SizedBox(height: 22),
-
-            // ---- BATTLE MODE PANEL ----
-            Container(
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(18),
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF1E1632), Color(0xFF151527)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
                 ),
-                border: Border.all(color: Colors.white12),
               ),
-              child: Row(
+
+              // Bottom Action Section
+              Column(
                 children: [
-                  Container(
-                    width: 34,
-                    height: 34,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: theme.colorScheme.primary.withOpacity(0.22),
-                    ),
-                    child: const Icon(
-                      Icons.bolt_rounded,
-                      color: Colors.white,
-                      size: 20,
+                  const SizedBox(height: 16),
+                  LobbyActionButton(
+                    isHost: widget.isHost,
+                    isEnabled: actionEnabled,
+                    isGuestReady: _myReady,
+                    onPressed: () {
+                      if (widget.isHost) {
+                        if (_canGoMatchFound) {
+                          _goMatchFound();
+                        }
+                        return;
+                      }
+
+                      setState(() {
+                        _myReady = !_myReady;
+                      });
+
+                      if (_canGoMatchFound) {
+                        Future.delayed(const Duration(milliseconds: 350), () {
+                          if (mounted) _goMatchFound();
+                        });
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    widget.isHost
+                        ? (_canGoMatchFound
+                            ? 'All players ready. Start duel now.'
+                            : 'Waiting for opponent to be ready...')
+                        : (_myReady
+                            ? 'Ready locked. Waiting for host...'
+                            : 'Tap Ready when you are set.'),
+                    style: const TextStyle(
+                      color: Colors.white54,
+                      fontSize: 12,
                     ),
                   ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          _battleTypeLabel(),
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        const SizedBox(height: 3),
-                        const Text(
-                          'Each duel has 10 questions. Scoring and timing are handled automatically.',
-                          style: TextStyle(
-                            color: Colors.white60,
-                            fontSize: 11,
-                            height: 1.3,
-                          ),
-                        ),
-                      ],
-                    ),
-                  )
                 ],
               ),
-            ),
-
-            const Spacer(),
-
-            // ---- BUTTONS ----
-            if (isHost)
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: theme.colorScheme.primary,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(22),
-                    ),
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pushNamed(BattleRoutes.play);
-                  },
-                  child: const Text(
-                    'Start duel',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              )
-            else
-              SizedBox(
-                width: double.infinity,
-                child: OutlinedButton(
-                  style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    side: const BorderSide(color: Colors.white24, width: 1.2),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(22),
-                    ),
-                  ),
-                  onPressed: () {},
-                  child: const Text(
-                    'Waiting for host…',
-                    style: TextStyle(
-                      color: Colors.white70,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-              ),
-          ],
+            ],
+          ),
         ),
       ),
     );

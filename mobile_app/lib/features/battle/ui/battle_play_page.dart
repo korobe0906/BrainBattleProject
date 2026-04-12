@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_theme.dart';
 import '../battle_routes.dart';
+import '../models/battle_stage.dart';
 
 class BattlePlayPage extends StatelessWidget {
   const BattlePlayPage({super.key});
   static const routeName = BattleRoutes.play;
+  static const stage = BattleStage.playing;
 
   @override
   Widget build(BuildContext context) {

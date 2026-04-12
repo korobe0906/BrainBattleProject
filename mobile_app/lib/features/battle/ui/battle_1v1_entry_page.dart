@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_theme.dart';
 import '../battle_routes.dart';
+import '../models/battle_stage.dart';
+import '../widgets/battle_1v1/entry/battle_1v1_header.dart';
+import '../widgets/battle_1v1/entry/duel_mode_card.dart';
+import '../widgets/battle_1v1/entry/duel_tab_switcher.dart';
+import '../widgets/battle_1v1/entry/match_info_card.dart';
+import '../widgets/battle_1v1/entry/room_code_input_card.dart';
 
 class Battle1v1EntryPage extends StatefulWidget {
   const Battle1v1EntryPage({super.key});
   static const routeName = BattleRoutes.v1Entry;
+  static const stage = BattleStage.entry;
 
   @override
   State<Battle1v1EntryPage> createState() => _Battle1v1EntryPageState();
@@ -31,73 +38,32 @@ class _Battle1v1EntryPageState extends State<Battle1v1EntryPage>
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Scaffold(
       backgroundColor: BBColors.darkBg,
-      appBar: AppBar(
-        backgroundColor: BBColors.darkBg,
-        elevation: 0,
-        centerTitle: true,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(
-            bottom: Radius.circular(20),
-          ),
-        ),
-        title: const Text(
-          '1v1 Duel',
-          style: TextStyle(fontWeight: FontWeight.w600),
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(52),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
-            child: Container(
-              height: 40,
-              decoration: BoxDecoration(
-                color: const Color(0xFF141428),
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: TabBar(
-                controller: _tab,
-                indicator: BoxDecoration(
-                  color: theme.colorScheme.primary.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                    color: theme.colorScheme.primary,
-                    width: 1.3,
-                  ),
-                ),
-                indicatorSize: TabBarIndicatorSize.tab,
-                labelColor: Colors.white,
-                unselectedLabelColor: Colors.white70,
-                labelStyle: const TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                ),
-                unselectedLabelStyle: const TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                ),
-                tabs: const [
-                  Tab(text: 'Create duel'),
-                  Tab(text: 'Join by code'),
-                ],
+      body: SafeArea(
+        bottom: false,
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+              child: BattleHeader(
+                onBack: () => Navigator.of(context).pop(),
               ),
             ),
-          ),
+            const SizedBox(height: 16),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: DuelTabSwitcher(controller: _tab),
+            ),
+            const SizedBox(height: 16),
+            Expanded(
+              child: TabBarView(
+                controller: _tab,
+                children: [_buildCreateTab(context), _buildJoinTab(context)],
+              ),
+            ),
+          ],
         ),
-      ),
-      body: TabBarView(
-        controller: _tab,
-        children: [
-          _buildCreateTab(context),
-          _buildJoinTab(context),
-        ],
       ),
     );
   }
@@ -106,175 +72,164 @@ class _Battle1v1EntryPageState extends State<Battle1v1EntryPage>
 
   Widget _buildCreateTab(BuildContext context) {
     final theme = Theme.of(context);
-
-    Widget modeTile({
-      required String title,
-      required String subtitle,
-      required String value,
-      required IconData icon,
-    }) {
-      final selected = _battleType == value;
-
-      return GestureDetector(
-        onTap: () => setState(() => _battleType = value),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 160),
-          curve: Curves.easeOut,
-          margin: const EdgeInsets.only(bottom: 12),
-          padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 14),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(22),
-            gradient: const LinearGradient(
-              colors: [
-                Color(0xFF151528),
-                Color(0xFF10101E),
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            border: Border.all(
-              color: selected
-                  ? theme.colorScheme.primary
-                  : Colors.white.withOpacity(0.10),
-              width: 1.4,
-            ),
-            boxShadow: selected
-                ? [
-                    BoxShadow(
-                      color: theme.colorScheme.primary.withOpacity(0.35),
-                      blurRadius: 18,
-                      offset: const Offset(0, 10),
-                    ),
-                  ]
-                : [],
-          ),
-          child: Row(
-            children: [
-              // Icon
-              Container(
-                width: 34,
-                height: 34,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color:
-                      selected ? theme.colorScheme.primary : Colors.white10,
-                ),
-                child: Icon(
-                  icon,
-                  color: selected ? Colors.black : Colors.white70,
-                  size: 20,
-                ),
-              ),
-              const SizedBox(width: 12),
-
-              // Texts
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      subtitle,
-                      style: const TextStyle(
-                        color: Colors.white60,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(width: 8),
-
-              const Text(
-                '10 questions',
-                style: TextStyle(
-                  color: Colors.white54,
-                  fontSize: 11,
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-
     return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'Choose battle mode',
+            'Select Battle Mode',
             style: TextStyle(
-              color: Colors.white70,
-              fontSize: 13,
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            '10 questions • Ranked duel',
+            style: TextStyle(color: Colors.white54, fontSize: 13),
+          ),
+          const SizedBox(height: 24),
+          DuelModeCard(
+            selected: _battleType == 'LISTENING',
+            onTap: () => setState(() => _battleType = 'LISTENING'),
+            title: 'Listening battle',
+            subtitle:
+                'Test your listening skills by answering audio questions.',
+            detailLabel: 'Difficulty: ',
+            detailValue: 'Medium',
+            detailSuffix: ' • ~2 minutes',
+            detailValueColor: const Color(0xFF00D9FF),
+            icon: Icons.headphones_rounded,
+            questionCount: '10 questions',
+          ),
+          const SizedBox(height: 16),
+          DuelModeCard(
+            selected: _battleType == 'VOCABULARY',
+            onTap: () => setState(() => _battleType = 'VOCABULARY'),
+            title: 'Vocabulary battle',
+            subtitle: 'Choose the correct word or meaning in context.',
+            detailLabel: 'Difficulty: ',
+            detailValue: 'Medium',
+            detailSuffix: ' • ~2 minutes',
+            detailValueColor: const Color(0xFF00D9FF),
+            icon: Icons.menu_book_rounded,
+            questionCount: '10 questions',
+          ),
+          const SizedBox(height: 16),
+          DuelModeCard(
+            selected: _battleType == 'GRAMMAR',
+            onTap: () => setState(() => _battleType = 'GRAMMAR'),
+            title: 'Grammar battle',
+            subtitle: 'Test your grammar skills with sentence challenges.',
+            detailLabel: 'Difficulty: ',
+            detailValue: 'Hard',
+            detailSuffix: ' • ~3 minutes',
+            detailValueColor: const Color(0xFFFFA726),
+            icon: Icons.spellcheck_rounded,
+            questionCount: '10 questions',
+          ),
+          const SizedBox(height: 16),
+          DuelModeCard(
+            selected: _battleType == 'MIXED',
+            onTap: () => setState(() => _battleType = 'MIXED'),
+            mixedStyle: true,
+            title: 'Mixed battle',
+            subtitle: 'All three skills combined.',
+            icon: Icons.auto_awesome_rounded,
+            badgeText: '10 Questions',
+            roles: const [
+              (label: 'Listening', icon: Icons.headphones_rounded),
+              (label: 'Reading', icon: Icons.menu_book_rounded),
+              (label: 'Writing', icon: Icons.spellcheck_rounded),
+            ],
+          ),
+          const SizedBox(height: 24),
+          const MatchInfoCard(),
+          const SizedBox(height: 24),
+          SizedBox(
+            width: double.infinity,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(999),
+                gradient: const LinearGradient(
+                  colors: [Color(0xFFF57AA7), Color(0xFFEAAFC8)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFFFF8DB7).withOpacity(0.45),
+                    blurRadius: 24,
+                    offset: const Offset(0, 10),
+                  ),
+                ],
+              ),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(999),
+                  onTap: () {
+                    Navigator.of(context).pushNamed(
+                      BattleRoutes.v1Matchmaking,
+                      arguments: {
+                        'battleType': _battleType,
+                        'isHost': true,
+                        'roomCode': 'AB37X',
+                      },
+                    );
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 16),
+                    child: Center(
+                      child: Text(
+                        'Create Duel',
+                        style: TextStyle(
+                          color: Color(0xFF160B18),
+                          fontSize: 15.5,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             ),
           ),
           const SizedBox(height: 10),
-
-          modeTile(
-            title: 'Listening battle',
-            subtitle: 'Listen to audio clips and pick the correct answer.',
-            value: 'LISTENING',
-            icon: Icons.headphones_rounded,
+          const Center(
+            child: Text(
+              'Searching opponent with similar rank',
+              style: TextStyle(color: Colors.white38, fontSize: 13),
+            ),
           ),
-          modeTile(
-            title: 'Reading battle',
-            subtitle: 'Read passages and answer comprehension questions.',
-            value: 'READING',
-            icon: Icons.menu_book_rounded,
-          ),
-          modeTile(
-            title: 'Writing battle',
-            subtitle: 'Complete sentences or fix grammar & spelling.',
-            value: 'WRITING',
-            icon: Icons.edit_note_rounded,
-          ),
-          modeTile(
-            title: 'Mixed (Listening + Reading + Writing)',
-            subtitle: 'A mix of all three skills in a single duel.',
-            value: 'MIXED',
-            icon: Icons.auto_awesome_rounded,
-          ),
-
-          const SizedBox(height: 24),
-
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: theme.colorScheme.primary,
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(22),
+          const SizedBox(height: 8),
+          Center(
+            child: Wrap(
+              spacing: 4,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                const Text(
+                  'Private duel?',
+                  style: TextStyle(color: Colors.white54, fontSize: 13),
                 ),
-              ),
-              onPressed: () {
-                // TODO: call API create duel
-                Navigator.of(context).pushNamed(
-                  BattleRoutes.v1Lobby,
-                  arguments: {
-                    'roomCode': 'AB37X',
-                    'battleType': _battleType,
-                    'isHost': true,
-                  },
-                );
-              },
-              child: const Text(
-                'Create duel',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
+                InkWell(
+                  onTap: () => _tab.animateTo(1),
+                  borderRadius: BorderRadius.circular(10),
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                    child: Text(
+                      'Join by code instead',
+                      style: TextStyle(
+                        color: Color(0xFF00D9FF),
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
           ),
         ],
@@ -285,79 +240,130 @@ class _Battle1v1EntryPageState extends State<Battle1v1EntryPage>
   // ------------------ JOIN BY CODE TAB ------------------
 
   Widget _buildJoinTab(BuildContext context) {
-    final theme = Theme.of(context);
-
     return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'Enter room code',
+            'Enter Room Code',
             style: TextStyle(
-              color: Colors.white70,
-              fontSize: 13,
-            ),
-          ),
-          const SizedBox(height: 10),
-          TextField(
-            controller: _codeCtrl,
-            style: const TextStyle(color: Colors.white),
-            textCapitalization: TextCapitalization.characters,
-            decoration: InputDecoration(
-              hintText: 'e.g. AB37X',
-              hintStyle: const TextStyle(color: Colors.white30),
-              filled: true,
-              fillColor: const Color(0xFF141428),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(18),
-                borderSide: BorderSide.none,
-              ),
-              contentPadding:
-                  const EdgeInsets.symmetric(vertical: 12, horizontal: 14),
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
             ),
           ),
           const SizedBox(height: 8),
           const Text(
-            'You will join a duel with mode chosen by the host.',
-            style: TextStyle(
-              color: Colors.white54,
-              fontSize: 11,
-            ),
+            'Join a private duel created by another player.',
+            style: TextStyle(color: Colors.white54, fontSize: 13),
           ),
-
           const SizedBox(height: 24),
+          RoomCodeInputCard(controller: _codeCtrl),
+          const SizedBox(height: 8),
+          const Text(
+            'You will join the battle mode chosen by the host.',
+            style: TextStyle(color: Colors.white54, fontSize: 13),
+          ),
+          const SizedBox(height: 24),
+          ValueListenableBuilder<TextEditingValue>(
+            valueListenable: _codeCtrl,
+            builder: (context, value, _) {
+              final code = value.text.trim().toUpperCase();
+              final canJoin = RegExp(r'^[A-Z0-9]{4,10}$').hasMatch(code);
 
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: theme.colorScheme.primary,
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(22),
+              return SizedBox(
+                width: double.infinity,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(999),
+                    gradient: canJoin
+                        ? const LinearGradient(
+                            colors: [Color(0xFFF57AA7), Color(0xFFEAAFC8)],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          )
+                        : LinearGradient(
+                            colors: [
+                              const Color(0xFF4A556B).withOpacity(0.55),
+                              const Color(0xFF2A364B).withOpacity(0.55),
+                            ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                    boxShadow: canJoin
+                        ? [
+                            BoxShadow(
+                              color: const Color(0xFFFF8DB7).withOpacity(0.38),
+                              blurRadius: 20,
+                              offset: const Offset(0, 10),
+                            ),
+                          ]
+                        : null,
+                  ),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(999),
+                      onTap: canJoin
+                          ? () {
+                              Navigator.of(context).pushNamed(
+                                BattleRoutes.v1Matchmaking,
+                                arguments: {
+                                  'battleType': 'UNKNOWN',
+                                  'isHost': false,
+                                  'roomCode': code,
+                                },
+                              );
+                            }
+                          : null,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        child: Center(
+                          child: Text(
+                            'Join Duel',
+                            style: TextStyle(
+                              color: canJoin
+                                  ? const Color(0xFF160B18)
+                                  : Colors.white38,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-              onPressed: () {
-                // TODO: call API join duel
-                Navigator.of(context).pushNamed(
-                  BattleRoutes.v1Lobby,
-                  arguments: {
-                    'roomCode': _codeCtrl.text.trim().isEmpty
-                        ? 'JOIN'
-                        : _codeCtrl.text.trim().toUpperCase(),
-                    'battleType': 'UNKNOWN',
-                    'isHost': false,
-                  },
-                );
-              },
-              child: const Text(
-                'Join duel',
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white70,
+              );
+            },
+          ),
+          const SizedBox(height: 12),
+          Center(
+            child: Wrap(
+              spacing: 4,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                const Text(
+                  'No code?',
+                  style: TextStyle(color: Colors.white54, fontSize: 13),
                 ),
-              ),
+                InkWell(
+                  onTap: () => _tab.animateTo(0),
+                  borderRadius: BorderRadius.circular(10),
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                    child: Text(
+                      'Create your own duel',
+                      style: TextStyle(
+                        color: Color(0xFF00D9FF),
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
