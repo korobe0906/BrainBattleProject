@@ -65,7 +65,7 @@ class BrainBattleApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: bbLightTheme(),
       darkTheme: bbDarkTheme(),
-      themeMode: ThemeMode.dark,
+      themeMode: ThemeMode.system,
       home: kDebugOpenAppShell ? const MainShell() : const SplashPage(),
       routes: {
         StarterPage.routeName: (_) => const StarterPage(),
@@ -133,7 +133,8 @@ class BrainBattleApp extends StatelessWidget {
         LearningRoutes.placementTest: (_) => const PlacementTestPage(),
         BattleRoutes.root: (_) => const BattleFlow(),
         MainShell.routeName: (_) => const MainShell(),
-        AppShell.routeName: (_) => const AppShell(), // Deprecated but kept for compatibility
+        AppShell.routeName: (_) =>
+            const AppShell(), // Deprecated but kept for compatibility
         LoginPage.routeName: (_) => const LoginPage(),
         SignUpPage.routeName: (_) => const SignUpPage(),
         VerifyOtpPage.routeName: (ctx) {
