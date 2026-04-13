@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-import '../starter/starter_page.dart';
+
+import '../../../app.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/theme_extensions.dart';
+import '../../../core/widgets/brand/brand_logo.dart';
 import '../data/services/user_session.dart';
-import '../../profile/ui/main_shell.dart';
+import '../starter/starter_page.dart';
+import '../../profile/ui/learner_profile_page.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -18,43 +23,28 @@ class _SplashPageState extends State<SplashPage>
   bool _navigated = false;
   bool _lottieReady = false;
 
-  // Brand colors (giữ nguyên)
-  static const _black = Color(0xFF000000);
-  static const _pinkBrain = Color(0xFFFF8FAB);
-  static const _pinkBattle = Color(0xFFF3B4C3);
-
   Future<void> _goNext() async {
     if (!mounted || _navigated) return;
     _navigated = true;
-    
-    // Check if user is already logged in
+
     final isLoggedIn = await UserSession.instance.isLoggedIn();
     final userId = await UserSession.instance.getUserId();
-    
+
+    if (!mounted) return;
+
     if (isLoggedIn && userId != null) {
-      // User is logged in, go to MainShell
-      if (mounted) {
-        Navigator.of(context).pushReplacement(
-          PageRouteBuilder(
-            pageBuilder: (_, __, ___) => const MainShell(initialIndex: 2),
-            transitionDuration: const Duration(milliseconds: 300),
-            transitionsBuilder: (context, animation, secondary, child) =>
-                FadeTransition(opacity: animation, child: child),
-          ),
-        );
-      }
+      Navigator.of(context).pushReplacementNamed(
+        LearnerProfilePage.routeName,
+      );
     } else {
-      // User not logged in, go to StarterPage
-      if (mounted) {
-        Navigator.of(context).pushReplacement(
-          PageRouteBuilder(
-            pageBuilder: (_, __, ___) => const StarterPage(),
-            transitionDuration: const Duration(milliseconds: 300),
-            transitionsBuilder: (context, animation, secondary, child) =>
-                FadeTransition(opacity: animation, child: child),
-          ),
-        );
-      }
+      Navigator.of(context).pushReplacement(
+        PageRouteBuilder(
+          pageBuilder: (_, __, ___) => const StarterPage(),
+          transitionDuration: const Duration(milliseconds: 300),
+          transitionsBuilder: (_, animation, __, child) =>
+              FadeTransition(opacity: animation, child: child),
+        ),
+      );
     }
   }
 
@@ -63,14 +53,12 @@ class _SplashPageState extends State<SplashPage>
     super.initState();
     _controller = AnimationController(vsync: this);
 
-    // Giữ nguyên logic: trì hoãn 3s rồi mới chạy animation (nếu đã ready)
-    Future.delayed(const Duration(seconds: 3), () {
+    Future.delayed(const Duration(seconds: 2), () {
       if (_lottieReady && mounted) {
         _controller.forward(from: 0);
       }
     });
 
-    // Khi chạy xong 1 vòng → điều hướng
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         _goNext();
@@ -86,105 +74,58 @@ class _SplashPageState extends State<SplashPage>
 
   @override
   Widget build(BuildContext context) {
+    final app = context.appTokens.colors;
     final w = MediaQuery.of(context).size.width;
-    final titleSize = (w * 0.10).clamp(26.0, 40.0).toDouble();
-    final subSize = (titleSize * 0.38).clamp(10.0, 16.0).toDouble();
     final lottieHeight = (w * 1.00).clamp(200.0, 280.0);
 
     return Scaffold(
-      backgroundColor: _black,
+      backgroundColor: app.backgroundPrimary,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        actions: [
+          IconButton(
+            tooltip: 'Toggle theme',
+            onPressed: () => BrainBattleApp.of(context).toggleTheme(),
+            icon: Icon(
+              Theme.of(context).brightness == Brightness.dark
+                  ? Icons.light_mode_rounded
+                  : Icons.dark_mode_rounded,
+              color: app.textPrimary,
+            ),
+          ),
+        ],
+      ),
       body: SafeArea(
         child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SizedBox(
-                height: lottieHeight,
-                child: Lottie.asset(
-                  'assets/animations/logo_animation_light.json',
-                  controller: _controller,
-                  frameRate: FrameRate.max,
-                  repeat: false,
-                  animate: false,
-                  onLoaded: (composition) {
-                    _controller
-                      ..duration = composition.duration
-                      ..value = 0.0;
-                    _lottieReady = true;
-                  },
+          child: Padding(
+            padding: AppSpacing.pagePadding,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(
+                  height: lottieHeight,
+                  child: Lottie.asset(
+                    'assets/animations/logo_animation_light.json',
+                    controller: _controller,
+                    frameRate: FrameRate.max,
+                    repeat: false,
+                    animate: false,
+                    onLoaded: (composition) {
+                      _controller
+                        ..duration = composition.duration
+                        ..value = 0.0;
+                      _lottieReady = true;
+                    },
+                  ),
                 ),
-              ),
-              const SizedBox(height: 28),
-
-              // ====== BRAND TITLE ======
-              RichText(
-                textAlign: TextAlign.center,
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                      text: 'BRAIN ',
-                      style: _BrandTypography.title(
-                        size: titleSize,
-                        color: _pinkBrain,
-                      ),
-                    ),
-                    TextSpan(
-                      text: 'BATTLE',
-                      style: _BrandTypography.title(
-                        size: titleSize,
-                        color: _pinkBattle,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'LANGUAGE LEARNING',
-                style: _BrandTypography.subtitle(size: subSize),
-              ),
-            ],
+                const SizedBox(height: AppSpacing.xl),
+                const BrandLogo(scale: 1.18),
+              ],
+            ),
           ),
         ),
       ),
-    );
-  }
-}
-
-/// =======================
-/// Typography (single source of truth)
-/// =======================
-class _Fonts {
-  // Đổi font tại đây nếu bạn thích font khác.
-  // Gợi ý: 'PlusJakartaSans' → tròn & mềm; fallback 'Poppins' → hệ thống.
-  static const primary = 'PlusJakartaSans';
-  static const fallback = <String>['Poppins', 'Roboto'];
-}
-
-class _BrandTypography {
-  /// Tiêu đề "BRAIN BATTLE"
-  static TextStyle title({required double size, required Color color}) {
-    return TextStyle(
-      fontFamily: _Fonts.primary,
-      fontFamilyFallback: _Fonts.fallback,
-      fontSize: size,
-      fontWeight: FontWeight.w900, // đậm & tròn
-      letterSpacing: 3.0,          // giảm nhẹ cho cân logo
-      height: 1.08,                // giữ tổng chiều cao không thay đổi
-      color: color,
-    );
-  }
-
-  /// Subtitle "LANGUAGE LEARNING"
-  static TextStyle subtitle({required double size}) {
-    return TextStyle(
-      fontFamily: _Fonts.primary,
-      fontFamilyFallback: _Fonts.fallback,
-      fontSize: size,
-      fontWeight: FontWeight.w800,
-      letterSpacing: 3.2,          // nhịp đều, cảm giác brandy
-      height: 1.1,
-      color: const Color(0xFFFFC4D6), // giữ nguyên màu bạn dùng
     );
   }
 }

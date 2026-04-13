@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../../core/theme/app_theme.dart';
+
+import '../../../core/widgets/layout/auth_scaffold.dart';
+import '../verify/verify_email_page.dart';
 import 'signup_controller.dart';
-import '../verify/verify_otp_page.dart';
-import 'package:lottie/lottie.dart';
+import 'widgets/sign_up_form.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -16,11 +17,12 @@ class SignUpPage extends StatefulWidget {
 class _SignUpPageState extends State<SignUpPage> {
   final _formKey = GlobalKey<FormState>();
   final _email = TextEditingController();
-  late final SignUpController _vm;
+  final _password = TextEditingController();
+  final _confirmPassword = TextEditingController();
 
-  // ignore: unused_field
-  static const _pinkBrain = Color(0xFFFF8FAB);
-  static const _pinkBattle = Color(0xFFF3B4C3);
+  late final SignUpController _vm;
+  bool _obscurePassword = true;
+  bool _obscureConfirmPassword = true;
 
   @override
   void initState() {
@@ -31,6 +33,8 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   void dispose() {
     _email.dispose();
+    _password.dispose();
+    _confirmPassword.dispose();
     _vm.dispose();
     super.dispose();
   }
@@ -44,246 +48,80 @@ class _SignUpPageState extends State<SignUpPage> {
     return null;
   }
 
+  String? _validatePassword(String? v) {
+    if (v == null || v.isEmpty) return 'Please enter your password';
+    if (v.length < 6) return 'At least 6 characters';
+    return null;
+  }
+
+  String? _validateConfirmPassword(String? v) {
+    if (v == null || v.isEmpty) return 'Please confirm your password';
+    if (v != _password.text) return 'Passwords do not match';
+    return null;
+  }
+
   Future<void> _submit() async {
     HapticFeedback.selectionClick();
     if (!_formKey.currentState!.validate()) return;
-    final email = _email.text.trim();
 
+    final email = _email.text.trim();
     final ok = await _vm.startRegistration(email);
+
     if (!mounted) return;
 
     if (ok) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Verification code sent!')));
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => VerifyOtpPage(email: email)),
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (_) => VerifyEmailPage(email: email),
+        ),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(_vm.errorMessage ?? 'Failed to send code')),
+        SnackBar(content: Text(_vm.errorMessage ?? 'Failed to create account')),
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final text = Theme.of(context).textTheme;
-    final media = MediaQuery.of(context);
-    final vGap = media.size.height < 700 ? 12.0 : 16.0;
-
-    return Scaffold(
-      backgroundColor: BBColors.darkBg,
-      appBar: AppBar(
-        backgroundColor: BBColors.darkBg,
-        elevation: 0,
-        centerTitle: false,
-        titleSpacing: 0,
-        leadingWidth: 48,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: const _HeaderTitle(
-          icon: Icons.mark_email_unread_rounded,
-          text: 'Verify email',
-        ),
-      ),
-      body: Stack(
+    return AuthScaffold(
+      title: 'Create your account',
+      subtitle: 'Start your learning journey today.',
+      showBackButton: true,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // 🔹 Lottie background layer
-          Positioned.fill(
-            child: Opacity(
-              opacity: 0.5, // nhẹ để không làm rối UI
-              child: Lottie.asset(
-                'assets/animations/animation_point.json',
-                fit: BoxFit.cover,
-                repeat: true,
-                frameRate: FrameRate.max,
-              ),
-            ),
+          SignUpForm(
+            formKey: _formKey,
+            email: _email,
+            password: _password,
+            confirmPassword: _confirmPassword,
+            obscurePassword: _obscurePassword,
+            obscureConfirmPassword: _obscureConfirmPassword,
+            togglePassword: () {
+              setState(() {
+                _obscurePassword = !_obscurePassword;
+              });
+            },
+            toggleConfirmPassword: () {
+              setState(() {
+                _obscureConfirmPassword = !_obscureConfirmPassword;
+              });
+            },
+            validateEmail: _validateEmail,
+            validatePassword: _validatePassword,
+            validateConfirmPassword: _validateConfirmPassword,
+            loadingListenable: _vm.loading,
+            onSubmit: _submit,
           ),
-
-          SafeArea(
-            child: Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 440),
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      SizedBox(height: vGap),
-                      const Hero(
-                        tag: 'bb_logo',
-                        child: Image(
-                          image: AssetImage(
-                            'assets/brainbattle_logo_light_pink.png',
-                          ),
-                          width: 90,
-                          height: 90,
-                        ),
-                      ),
-                      const SizedBox(height: 14),
-                      Text(
-                        'Verify your email',
-                        textAlign: TextAlign.center,
-                        style: text.titleLarge?.copyWith(
-                          fontWeight: FontWeight.w800,
-                          fontSize: 22,
-                          color: _pinkBattle,
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        'We will send a 6-digit code to your inbox.',
-                        textAlign: TextAlign.center,
-                        style: text.bodyMedium?.copyWith(
-                          color: Colors.white70,
-                          fontSize: 14,
-                        ),
-                      ),
-                      SizedBox(height: vGap + 8),
-
-                      Form(
-                        key: _formKey,
-                        child: _BBTextField(
-                          label: 'Email',
-                          controller: _email,
-                          keyboardType: TextInputType.emailAddress,
-                          validator: _validateEmail,
-                        ),
-                      ),
-                      const SizedBox(height: 18),
-
-                      ValueListenableBuilder<bool>(
-                        valueListenable: _vm.loading,
-                        builder: (_, isLoading, __) {
-                          return SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton(
-                              onPressed: isLoading ? null : _submit,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: _pinkBattle,
-                                foregroundColor: Colors.black,
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 14,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                                elevation: 6,
-                                shadowColor: const Color(0x44FB6F92),
-                              ),
-                              child: isLoading
-                                  ? const SizedBox(
-                                      width: 20,
-                                      height: 20,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                      ),
-                                    )
-                                  : const Text('Send code'),
-                            ),
-                          );
-                        },
-                      ),
-
-                      const SizedBox(height: 26),
-                      Center(
-                        child: TextButton(
-                          onPressed: () => Navigator.pushReplacementNamed(
-                            context,
-                            '/auth/login',
-                          ),
-                          child: const Text('Already have an account? Login'),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+          const SizedBox(height: 24),
+          Center(
+            child: TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Already have an account? Login'),
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _HeaderTitle extends StatelessWidget {
-  final IconData icon;
-  final String text;
-  const _HeaderTitle({required this.icon, required this.text});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        const SizedBox(width: 4),
-        Icon(icon, color: Color(0xFFFF8FAB), size: 20),
-        const SizedBox(width: 8),
-        const Text(
-          'Verify email',
-          style: TextStyle(
-            fontFamily: 'PlusJakartaSans',
-            fontWeight: FontWeight.w800,
-            fontSize: 16,
-            letterSpacing: .2,
-            color: Colors.white,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _BBTextField extends StatelessWidget {
-  final String label;
-  final TextEditingController controller;
-  final String? Function(String?)? validator;
-  final bool obscureText;
-  final TextInputType? keyboardType;
-
-  const _BBTextField({
-    required this.label,
-    required this.controller,
-    this.validator,
-    // ignore: unused_element_parameter
-    this.obscureText = false,
-    this.keyboardType,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-      controller: controller,
-      validator: validator,
-      obscureText: obscureText,
-      keyboardType: keyboardType,
-      style: const TextStyle(color: Colors.white),
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: const TextStyle(color: Colors.white70),
-        filled: true,
-        fillColor: const Color(0xFF3A3150),
-        enabledBorder: OutlineInputBorder(
-          borderSide: const BorderSide(color: Colors.white10),
-          borderRadius: BorderRadius.circular(14),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderSide: const BorderSide(color: Colors.white30),
-          borderRadius: BorderRadius.circular(14),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.redAccent),
-          borderRadius: BorderRadius.circular(14),
-        ),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 14,
-          vertical: 14,
-        ),
       ),
     );
   }
