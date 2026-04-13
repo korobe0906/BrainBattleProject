@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../core/widgets/layout/auth_scaffold.dart';
+import '../../profile/ui/learner_profile_page.dart';
 import '../forgot/forgot_password_page.dart';
 import '../signup/sign_up_page.dart';
-import '../../profile/ui/learner_profile_page.dart';
 import 'login_controller.dart';
 import 'widgets/login_form.dart';
 import 'widgets/social_login_section.dart';

@@ -1,29 +1,33 @@
 import 'package:flutter/foundation.dart';
+
+import '../data/models/auth_me_response.dart';
 import 'login_repository.dart';
 
 class LoginController {
+  LoginController({LoginRepository? repo}) {
+    _repo = repo ?? LoginRepository();
+  }
+
   final loading = ValueNotifier<bool>(false);
   final error = ValueNotifier<String?>(null);
   final obscurePassword = ValueNotifier<bool>(true);
 
   late final LoginRepository _repo;
 
-  LoginController({LoginRepository? repo}) {
-    _repo = repo ?? LoginRepository();
-  }
+  AuthMeResponse? _lastAuthMe;
+  AuthMeResponse? get lastAuthMe => _lastAuthMe;
 
-  /// Login with username and password
-  /// 
-  /// Returns true on success, false on error
-  /// Error message is available in error.value
-  Future<bool> login(String username, String password) async {
+  Future<bool> login(String email, String password) async {
     try {
       loading.value = true;
       error.value = null;
-      await _repo.login(username, password);
+
+      _lastAuthMe = await _repo.login(email, password);
       return true;
     } catch (e) {
-      error.value = e is Exception ? e.toString().replaceFirst('Exception: ', '') : 'Login failed';
+      error.value = e is Exception
+          ? e.toString().replaceFirst('Exception: ', '')
+          : 'Login failed';
       return false;
     } finally {
       loading.value = false;
@@ -31,6 +35,7 @@ class LoginController {
   }
 
   void togglePassword() => obscurePassword.value = !obscurePassword.value;
+
   void dispose() {
     loading.dispose();
     error.dispose();

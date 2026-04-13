@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/config/app_env.dart';
 import '../../../core/widgets/layout/auth_scaffold.dart';
-import 'reset_password_page.dart';
+import '../data/services/supabase_auth_service.dart';
 import 'widgets/forgot_password_form.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
@@ -16,6 +17,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   final _formKey = GlobalKey<FormState>();
   final _email = TextEditingController();
 
+  bool _loading = false;
+
   String? _validateEmail(String? v) {
     if (v == null || v.trim().isEmpty) return 'Please enter your email';
     final ok = RegExp(
@@ -25,18 +28,36 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     return null;
   }
 
-  void _submit() {
+  Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
 
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => ResetPasswordPage(email: _email.text.trim()),
-      ),
-    );
+    setState(() => _loading = true);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Reset link sent')),
-    );
+    try {
+      await SupabaseAuthService.instance.sendPasswordResetEmail(
+        email: _email.text.trim(),
+        redirectTo: AppEnv.resetPasswordUrl,
+      );
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Reset link sent. Please check your email.'),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+
+      final message = e.toString().replaceFirst('Exception: ', '');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message)),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _loading = false);
+      }
+    }
   }
 
   @override
@@ -55,7 +76,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         formKey: _formKey,
         email: _email,
         validateEmail: _validateEmail,
-        onSubmit: _submit,
+        onSubmit: _loading ? () {} : _submit,
       ),
     );
   }

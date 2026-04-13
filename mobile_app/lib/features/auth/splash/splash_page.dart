@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
 import '../../../app.dart';
+import '../../../core/services/auth_session_service.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/theme_extensions.dart';
 import '../../../core/widgets/brand/brand_logo.dart';
-import '../data/services/user_session.dart';
+import '../data/api/auth_context_api.dart';
 import '../starter/starter_page.dart';
 import '../../profile/ui/learner_profile_page.dart';
 
@@ -22,30 +23,52 @@ class _SplashPageState extends State<SplashPage>
   late final AnimationController _controller;
   bool _navigated = false;
   bool _lottieReady = false;
+  bool _animationStarted = false;
 
   Future<void> _goNext() async {
     if (!mounted || _navigated) return;
     _navigated = true;
 
-    final isLoggedIn = await UserSession.instance.isLoggedIn();
-    final userId = await UserSession.instance.getUserId();
+    final authSession = AuthSessionService.instance;
 
-    if (!mounted) return;
+    if (!authSession.hasValidLookingSession) {
+      if (!mounted) return;
+      _goToStarter();
+      return;
+    }
 
-    if (isLoggedIn && userId != null) {
+    try {
+      await AuthContextApi.instance.getMe();
+
+      if (!mounted) return;
       Navigator.of(context).pushReplacementNamed(
         LearnerProfilePage.routeName,
       );
-    } else {
-      Navigator.of(context).pushReplacement(
-        PageRouteBuilder(
-          pageBuilder: (_, __, ___) => const StarterPage(),
-          transitionDuration: const Duration(milliseconds: 300),
-          transitionsBuilder: (_, animation, __, child) =>
-              FadeTransition(opacity: animation, child: child),
-        ),
-      );
+    } catch (_) {
+      await authSession.signOut();
+
+      if (!mounted) return;
+      _goToStarter();
     }
+  }
+
+  void _goToStarter() {
+    Navigator.of(context).pushReplacement(
+      PageRouteBuilder(
+        pageBuilder: (_, __, ___) => const StarterPage(),
+        transitionDuration: const Duration(milliseconds: 300),
+        transitionsBuilder: (_, animation, __, child) =>
+            FadeTransition(opacity: animation, child: child),
+      ),
+    );
+  }
+
+  void _startAnimationIfReady() {
+    if (!mounted || _animationStarted) return;
+    if (!_lottieReady) return;
+
+    _animationStarted = true;
+    _controller.forward(from: 0);
   }
 
   @override
@@ -54,8 +77,12 @@ class _SplashPageState extends State<SplashPage>
     _controller = AnimationController(vsync: this);
 
     Future.delayed(const Duration(seconds: 2), () {
-      if (_lottieReady && mounted) {
-        _controller.forward(from: 0);
+      if (!mounted || _navigated) return;
+
+      if (_lottieReady) {
+        _startAnimationIfReady();
+      } else {
+        _goNext();
       }
     });
 
@@ -115,7 +142,9 @@ class _SplashPageState extends State<SplashPage>
                       _controller
                         ..duration = composition.duration
                         ..value = 0.0;
+
                       _lottieReady = true;
+                      _startAnimationIfReady();
                     },
                   ),
                 ),

@@ -5,7 +5,6 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/theme_extensions.dart';
 import '../../login/login_page.dart';
 import '../../signup/sign_up_page.dart';
-import '../../../profile/ui/learner_profile_page.dart';
 
 class StarterPopup extends StatelessWidget {
   const StarterPopup({
@@ -71,6 +70,8 @@ class StarterPopup extends StatelessWidget {
             const SizedBox(height: AppSpacing.sm),
             _Dots(length: slides.length, current: currentIndex),
             const SizedBox(height: AppSpacing.xl),
+
+            // 🔥 Buttons: Sign up + Login
             Row(
               children: [
                 Expanded(
@@ -92,12 +93,7 @@ class StarterPopup extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: AppSpacing.sm),
-            _ExploreGradientButton(
-              onPressed: () => Navigator.of(context).pushReplacementNamed(
-                LearnerProfilePage.routeName,
-              ),
-            ),
+
             const SizedBox(height: AppSpacing.xs),
           ],
         ),
@@ -215,60 +211,6 @@ class _Dots extends StatelessWidget {
           ),
         );
       }),
-    );
-  }
-}
-
-class _ExploreGradientButton extends StatelessWidget {
-  const _ExploreGradientButton({
-    required this.onPressed,
-  });
-
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    final auth = context.authTokens.colors;
-
-    return SizedBox(
-      width: double.infinity,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [auth.brandSecondary, auth.accent],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(AppRadius.xxl),
-          boxShadow: [
-            BoxShadow(
-              blurRadius: 18,
-              offset: const Offset(0, 8),
-              color: auth.heroGlow,
-            ),
-          ],
-        ),
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.transparent,
-            shadowColor: Colors.transparent,
-            foregroundColor: Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(AppRadius.xxl),
-            ),
-            padding: const EdgeInsets.symmetric(vertical: 15),
-          ),
-          onPressed: onPressed,
-          child: const Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.explore_outlined, size: 18),
-              SizedBox(width: 6),
-              Text('Explore'),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }

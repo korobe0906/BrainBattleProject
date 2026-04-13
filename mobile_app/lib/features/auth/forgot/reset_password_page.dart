@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../core/widgets/layout/auth_scaffold.dart';
+import '../data/services/supabase_auth_service.dart';
 import '../login/login_page.dart';
 import 'widgets/reset_password_form.dart';
 
@@ -25,6 +27,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
 
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
+  bool _loading = false;
 
   String? _validatePassword(String? v) {
     if (v == null || v.isEmpty) return 'Please enter your new password';
@@ -38,17 +41,38 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
     return null;
   }
 
-  void _submit() {
+  Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Password updated successfully')),
-    );
+    setState(() => _loading = true);
 
-    Navigator.of(context).pushNamedAndRemoveUntil(
-      LoginPage.routeName,
-      (route) => false,
-    );
+    try {
+      await SupabaseAuthService.instance.updatePassword(
+        newPassword: _password.text,
+      );
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Password updated successfully')),
+      );
+
+      Navigator.of(context).pushNamedAndRemoveUntil(
+        LoginPage.routeName,
+        (route) => false,
+      );
+    } catch (e) {
+      if (!mounted) return;
+
+      final message = e.toString().replaceFirst('Exception: ', '');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message)),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _loading = false);
+      }
+    }
   }
 
   @override
@@ -60,9 +84,12 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
 
   @override
   Widget build(BuildContext context) {
+    final currentEmail = Supabase.instance.client.auth.currentUser?.email;
+    final subtitle = widget.email.isNotEmpty ? widget.email : (currentEmail ?? '');
+
     return AuthScaffold(
       title: 'Create a new password',
-      subtitle: widget.email,
+      subtitle: subtitle,
       showBackButton: true,
       child: ResetPasswordForm(
         formKey: _formKey,
@@ -82,7 +109,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
         },
         validatePassword: _validatePassword,
         validateConfirmPassword: _validateConfirmPassword,
-        onSubmit: _submit,
+        onSubmit: _loading ? () {} : _submit,
       ),
     );
   }

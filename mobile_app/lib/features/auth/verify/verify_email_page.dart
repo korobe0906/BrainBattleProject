@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/config/app_env.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/theme_extensions.dart';
 import '../../../core/widgets/layout/auth_card.dart';
@@ -37,7 +38,11 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
   }
 
   Future<void> _resend() async {
-    final ok = await _vm.resendOtp(widget.email);
+    final ok = await _vm.resendOtp(
+      email: widget.email,
+      emailRedirectTo: AppEnv.authCallbackUrl,
+    );
+
     if (!mounted) return;
 
     ScaffoldMessenger.of(context).showSnackBar(

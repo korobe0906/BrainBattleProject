@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/theme_extensions.dart';
 
@@ -29,13 +30,25 @@ class SocialLoginSection extends StatelessWidget {
         _SocialButton(
           label: 'Continue with Google',
           icon: Icons.g_mobiledata_rounded,
-          onPressed: () {},
+          onPressed: () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Google sign-in will be added later.'),
+              ),
+            );
+          },
         ),
         const SizedBox(height: 12),
         _SocialButton(
           label: 'Continue with Facebook',
           icon: Icons.facebook_rounded,
-          onPressed: () {},
+          onPressed: () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Facebook sign-in will be added later.'),
+              ),
+            );
+          },
         ),
       ],
     );

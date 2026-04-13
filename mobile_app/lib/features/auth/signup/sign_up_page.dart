@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../../core/config/app_env.dart';
 import '../../../core/widgets/layout/auth_scaffold.dart';
 import '../verify/verify_email_page.dart';
 import 'signup_controller.dart';
@@ -65,7 +66,13 @@ class _SignUpPageState extends State<SignUpPage> {
     if (!_formKey.currentState!.validate()) return;
 
     final email = _email.text.trim();
-    final ok = await _vm.startRegistration(email);
+    final password = _password.text;
+
+    final ok = await _vm.startRegistration(
+      email: email,
+      password: password,
+      emailRedirectTo: AppEnv.authCallbackUrl,
+    );
 
     if (!mounted) return;
 
@@ -77,7 +84,9 @@ class _SignUpPageState extends State<SignUpPage> {
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(_vm.errorMessage ?? 'Failed to create account')),
+        SnackBar(
+          content: Text(_vm.errorMessage ?? 'Failed to create account'),
+        ),
       );
     }
   }

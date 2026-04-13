@@ -178,16 +178,19 @@ class BrainBattleApp extends StatelessWidget {
   }
 }
 */
-import 'package:flutter/material.dart';
-import 'core/theme/app_theme.dart';
+import 'dart:async';
 
-import 'features/auth/splash/splash_page.dart';
-import 'features/auth/starter/starter_page.dart';
-import 'features/auth/login/login_page.dart';
-import 'features/auth/signup/sign_up_page.dart';
-import 'features/auth/verify/verify_email_page.dart';
+import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+import 'core/theme/app_theme.dart';
 import 'features/auth/forgot/forgot_password_page.dart';
 import 'features/auth/forgot/reset_password_page.dart';
+import 'features/auth/login/login_page.dart';
+import 'features/auth/signup/sign_up_page.dart';
+import 'features/auth/splash/splash_page.dart';
+import 'features/auth/starter/starter_page.dart';
+import 'features/auth/verify/verify_email_page.dart';
 import 'features/profile/ui/learner_profile_page.dart';
 
 class BrainBattleApp extends StatefulWidget {
@@ -202,6 +205,9 @@ class BrainBattleApp extends StatefulWidget {
 
 class _BrainBattleAppState extends State<BrainBattleApp> {
   ThemeMode _themeMode = ThemeMode.dark;
+  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
+
+  StreamSubscription<AuthState>? _authSub;
 
   ThemeMode get themeMode => _themeMode;
 
@@ -219,8 +225,40 @@ class _BrainBattleAppState extends State<BrainBattleApp> {
   }
 
   @override
+  void initState() {
+    super.initState();
+
+    _authSub = Supabase.instance.client.auth.onAuthStateChange.listen((data) {
+      final event = data.event;
+      final navigator = _navigatorKey.currentState;
+
+      if (navigator == null) return;
+
+      switch (event) {
+        case AuthChangeEvent.passwordRecovery:
+          navigator.pushNamed(
+            ResetPasswordPage.routeName,
+            arguments: {
+              'email': Supabase.instance.client.auth.currentUser?.email ?? '',
+            },
+          );
+          break;
+        default:
+          break;
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _authSub?.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: _navigatorKey,
       title: 'BrainBattle',
       debugShowCheckedModeBanner: false,
       theme: bbLightTheme(),

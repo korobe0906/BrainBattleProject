@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../app.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/theme_extensions.dart';
 import '../../../core/widgets/loading/bb_loading_overlay.dart';
-import '../../auth/data/services/user_session.dart';
 import '../../auth/login/login_page.dart';
 
 class LearnerProfilePage extends StatefulWidget {
@@ -23,17 +23,18 @@ class _LearnerProfilePageState extends State<LearnerProfilePage> {
   Future<void> _logout() async {
     setState(() => _loading = true);
 
-    await Future.delayed(const Duration(milliseconds: 600));
-    await UserSession.instance.clear();
+    try {
+      await Supabase.instance.client.auth.signOut();
+    } finally {
+      if (!mounted) return;
 
-    if (!mounted) return;
+      setState(() => _loading = false);
 
-    setState(() => _loading = false);
-
-    Navigator.of(context).pushNamedAndRemoveUntil(
-      LoginPage.routeName,
-      (route) => false,
-    );
+      Navigator.of(context).pushNamedAndRemoveUntil(
+        LoginPage.routeName,
+        (route) => false,
+      );
+    }
   }
 
   Future<void> _simulateLoading() async {
@@ -41,6 +42,36 @@ class _LearnerProfilePageState extends State<LearnerProfilePage> {
     await Future.delayed(const Duration(seconds: 2));
     if (!mounted) return;
     setState(() => _loading = false);
+  }
+
+  String get _displayName {
+    final user = Supabase.instance.client.auth.currentUser;
+    final metadata = user?.userMetadata;
+
+    final fullName = metadata?['full_name']?.toString();
+    if (fullName != null && fullName.trim().isNotEmpty) {
+      return fullName.trim();
+    }
+
+    final name = metadata?['name']?.toString();
+    if (name != null && name.trim().isNotEmpty) {
+      return name.trim();
+    }
+
+    final email = user?.email;
+    if (email != null && email.trim().isNotEmpty) {
+      return email.split('@').first;
+    }
+
+    return 'Learner';
+  }
+
+  String get _subtitle {
+    final email = Supabase.instance.client.auth.currentUser?.email;
+    if (email != null && email.isNotEmpty) {
+      return email;
+    }
+    return 'Signed in';
   }
 
   @override
@@ -120,7 +151,7 @@ class _LearnerProfilePageState extends State<LearnerProfilePage> {
                       ),
                       const SizedBox(height: AppSpacing.md),
                       Text(
-                        'Demo Learner',
+                        _displayName,
                         style: text.titleLarge?.copyWith(
                           color: app.textPrimary,
                           fontWeight: FontWeight.w800,
@@ -128,7 +159,7 @@ class _LearnerProfilePageState extends State<LearnerProfilePage> {
                       ),
                       const SizedBox(height: AppSpacing.xs),
                       Text(
-                        'English learner • Auth preview mode',
+                        _subtitle,
                         style: text.bodyMedium?.copyWith(
                           color: app.textSecondary,
                         ),
