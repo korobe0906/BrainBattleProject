@@ -2,9 +2,13 @@
 import 'package:flutter/material.dart';
 import 'ui/battle_queue_page.dart';
 import 'ui/battle_1v1_entry_page.dart';
+import 'ui/battle_1v1_matchmaking_page.dart';
 import 'ui/battle_3v3_entry_page.dart';
+import 'ui/battle_3v3_matchmaking_page.dart';
 import 'ui/battle_1v1_lobby_page.dart';
 import 'ui/battle_3v3_lobby_page.dart';
+import 'ui/battle_1v1_match_found_page.dart';
+import 'ui/battle_3v3_match_found_page.dart';
 import 'ui/battle_play_page.dart';
 import 'ui/battle_result_page.dart';
 
@@ -17,9 +21,13 @@ class BattleRoutes {
   // Nested routes inside BattleFlow
   static const mode = '/battle/mode';
   static const v1Entry = '/battle/1v1/entry';
+  static const v1Matchmaking = '/battle/1v1/matchmaking';
+  static const v1MatchFound = '/battle/1v1/match-found';
   static const v3Entry = '/battle/3v3/entry';
+  static const v3Matchmaking = '/battle/3v3/matchmaking';
   static const v1Lobby = '/battle/1v1/lobby';
   static const v3Lobby = '/battle/3v3/lobby';
+  static const v3MatchFound = '/battle/3v3/match-found';
   static const play = '/battle/play';
   static const result = '/battle/result';
 
@@ -36,11 +44,36 @@ class BattleRoutes {
           builder: (_) => const Battle1v1EntryPage(),
           settings: settings,
         );
+      case v1Matchmaking:
+        final args = settings.arguments;
+        if (args is Map<String, dynamic>) {
+          return MaterialPageRoute(
+            builder: (_) => Battle1v1MatchmakingPage(
+              battleType: args['battleType'] as String? ?? 'MIXED',
+              isHost: args['isHost'] as bool? ?? true,
+              roomCode: args['roomCode'] as String? ?? 'AB37X',
+            ),
+            settings: settings,
+          );
+        }
+        return null;
       case v3Entry:
         return MaterialPageRoute(
           builder: (_) => const Battle3v3EntryPage(),
           settings: settings,
         );
+      case v3Matchmaking:
+        final args = settings.arguments;
+        if (args is Map<String, dynamic>) {
+          return MaterialPageRoute(
+            builder: (_) => Battle3v3MatchmakingPage(
+              roomCode: args['roomCode'] as String? ?? 'TEAM1',
+              isHost: args['isHost'] as bool? ?? false,
+            ),
+            settings: settings,
+          );
+        }
+        return null;
       case v1Lobby:
         final args = settings.arguments;
         if (args is Map<String, dynamic>) {
@@ -49,6 +82,7 @@ class BattleRoutes {
               roomCode: args['roomCode'] as String? ?? '',
               battleType: args['battleType'] as String? ?? 'MIXED',
               isHost: args['isHost'] as bool? ?? false,
+              opponentName: args['opponentName'] as String? ?? 'ShadowHunter',
             ),
             settings: settings,
           );
@@ -61,6 +95,29 @@ class BattleRoutes {
             builder: (_) => Battle3v3LobbyPage(
               roomCode: args['roomCode'] as String? ?? '',
               isHost: args['isHost'] as bool? ?? false,
+            ),
+            settings: settings,
+          );
+        }
+        return null;
+      case v1MatchFound:
+        final args = settings.arguments;
+        if (args is Map<String, dynamic>) {
+          return MaterialPageRoute(
+            builder: (_) => Battle1v1MatchFoundPage(
+              battleType: args['battleType'] as String? ?? 'MIXED',
+              opponentName: args['opponentName'] as String? ?? 'ShadowHunter',
+            ),
+            settings: settings,
+          );
+        }
+        return null;
+      case v3MatchFound:
+        final args = settings.arguments;
+        if (args is Map<String, dynamic>) {
+          return MaterialPageRoute(
+            builder: (_) => Battle3v3MatchFoundPage(
+              roomCode: args['roomCode'] as String? ?? 'TEAM1',
             ),
             settings: settings,
           );

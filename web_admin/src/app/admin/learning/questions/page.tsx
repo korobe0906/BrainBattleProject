@@ -4,149 +4,161 @@ import { useEffect, useMemo, useState } from "react";
 import { QuestionsHeader } from "@/components/questions/QuestionsHeader";
 import { QuestionsToolbar } from "@/components/questions/QuestionsToolbar";
 import { QuestionsTable } from "@/components/questions/QuestionsTable";
-import { QuestionRow } from "@/types/questions.types";
-import { adminContentApi } from "@/lib/api/admin-content";
+import { Question } from "@/types/learningContent.types";
+import { mockQuestions } from "@/mock/learningContent.mock";
 
-type PublishedFilter = "All" | "Published" | "Draft";
-type ModeFilter = "All" | "listening" | "speaking" | "reading" | "writing";
+const ITEMS_PER_PAGE = 10;
 
 export default function QuestionsPage() {
-  const [questions, setQuestions] = useState<QuestionRow[]>([]);
+  const [questions, setQuestions] = useState<Question[]>([]);
   const [q, setQ] = useState("");
-  const [published, setPublished] = useState<PublishedFilter>("All");
-  const [mode, setMode] = useState<ModeFilter>("All");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [status, setStatus] = useState("All");
+  const [type, setType] = useState("All");
+  const [difficulty, setDifficulty] = useState("All");
+  const [level, setLevel] = useState("All");
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [currentPage, setCurrentPage] = useState(1);
 
-  // Fetch questions
   useEffect(() => {
-    const fetchQuestions = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const publishedOnly = published === "Published" ? true : undefined;
-        const modeFilter = mode !== "All" ? mode : undefined;
-        const data = await adminContentApi.getQuestions({
-          publishedOnly,
-          mode: modeFilter,
-        });
-        setQuestions(data);
-      } catch (err: any) {
-        console.error("Failed to fetch questions:", err);
-        setError(err.message || "Failed to load questions");
-      } finally {
-        setLoading(false);
-      }
-    };
+    setQuestions(mockQuestions);
+  }, []);
 
-    fetchQuestions();
-  }, [published, mode]);
-
-  // Filter questions by search query
   const filtered = useMemo(() => {
-    const text = q.trim().toLowerCase();
-    if (!text) return questions;
+    return questions.filter((question) => {
+      const matchesQ =
+        q === "" ||
+        question.questionText.toLowerCase().includes(q.toLowerCase()) ||
+        question.questionCode.toLowerCase().includes(q.toLowerCase());
 
-    return questions.filter((q) => {
+      const matchesStatus = status === "All" || question.status === status;
+      const matchesType = type === "All" || question.type === type;
+      const matchesDifficulty = difficulty === "All" || question.difficulty === difficulty;
+      const matchesLevel = level === "All" || question.level === level;
+
       return (
-        q.questionId.toLowerCase().includes(text) ||
-        q.prompt.toLowerCase().includes(text) ||
-        q.lessonId.toLowerCase().includes(text)
+        matchesQ &&
+        matchesStatus &&
+        matchesType &&
+        matchesDifficulty &&
+        matchesLevel
       );
     });
-  }, [questions, q]);
+  }, [questions, q, status, type, difficulty, level]);
 
-  // Handlers
-  const handleAdd = () => {
-    // TODO: Open create question dialog
-    console.log("Add question");
+  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
+  const paginatedQuestions = filtered.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
+  const handleToggleSelect = (id: string) => {
+    const newSelected = new Set(selectedIds);
+    if (newSelected.has(id)) {
+      newSelected.delete(id);
+    } else {
+      newSelected.add(id);
+    }
+    setSelectedIds(newSelected);
   };
 
-  const handleEdit = (question: QuestionRow) => {
-    // TODO: Open edit question dialog
-    console.log("Edit question:", question);
-  };
-
-  const handleDelete = async (question: QuestionRow) => {
-    try {
-      await adminContentApi.deleteQuestion(question.id);
-      setQuestions((prev) => prev.filter((q) => q.id !== question.id));
-    } catch (err: any) {
-      alert(`Failed to delete question: ${err.message}`);
+  const handleToggleAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedIds(new Set(paginatedQuestions.map((q) => q.id)));
+    } else {
+      setSelectedIds(new Set());
     }
   };
-
-  const handlePublish = async (question: QuestionRow) => {
-    try {
-      await adminContentApi.publishQuestion(question.id);
-      setQuestions((prev) =>
-        prev.map((q) => (q.id === question.id ? { ...q, published: true } : q))
-      );
-    } catch (err: any) {
-      alert(`Failed to publish question: ${err.message}`);
-    }
-  };
-
-  const handleUnpublish = async (question: QuestionRow) => {
-    try {
-      await adminContentApi.unpublishQuestion(question.id);
-      setQuestions((prev) =>
-        prev.map((q) => (q.id === question.id ? { ...q, published: false } : q))
-      );
-    } catch (err: any) {
-      alert(`Failed to unpublish question: ${err.message}`);
-    }
-  };
-
-  const handleExport = () => {
-    console.log("Export questions");
-  };
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-gray-500">Loading questions...</div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-red-500">Error: {error}</div>
-      </div>
-    );
-  }
 
   return (
-    <div className="space-y-5">
-      <QuestionsHeader />
+    <div className="space-y-6">
+      
 
+      {/* Search & Filters */}
       <QuestionsToolbar
         q={q}
-        setQ={setQ}
-        published={published}
-        setPublished={setPublished}
-        mode={mode}
-        setMode={setMode}
-        onAdd={handleAdd}
-        onExport={handleExport}
+        onQChange={setQ}
+        status={status}
+        onStatusChange={setStatus}
+        type={type}
+        onTypeChange={setType}
+        difficulty={difficulty}
+        onDifficultyChange={setDifficulty}
+        level={level}
+        onLevelChange={setLevel}
       />
 
+      {/* Table */}
       <QuestionsTable
-        questions={filtered}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-        onPublish={handlePublish}
-        onUnpublish={handleUnpublish}
+        questions={paginatedQuestions}
+        selectedIds={selectedIds}
+        onToggleSelect={handleToggleSelect}
+        onToggleAll={handleToggleAll}
       />
 
-      <div className="flex items-center justify-between text-sm text-gray-500">
-        <span>
-          Showing {filtered.length} of {questions.length} questions
-        </span>
+      {/* Pagination */}
+      <div className="flex items-center justify-between bg-white px-6 py-4 rounded-lg border border-gray-200">
+        <div className="text-sm text-gray-600">
+          Showing {Math.max(1, (currentPage - 1) * ITEMS_PER_PAGE + 1)} to{" "}
+          {Math.min(currentPage * ITEMS_PER_PAGE, filtered.length)} of {filtered.length} questions
+        </div>
+        <div className="flex gap-2">
+          <button
+            type={"button" as const}
+            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+            className="px-3 py-1 rounded-lg border border-gray-200 text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+          >
+            Previous
+          </button>
+          <div className="flex items-center gap-1">
+            {Array.from({ length: totalPages }).map((_, i) => (
+              <button
+                key={i}
+                type={"button" as const}
+                onClick={() => setCurrentPage(i + 1)}
+                className={`px-2 py-1 rounded text-sm ${
+                  currentPage === i + 1
+                    ? "bg-pink-600 text-white"
+                    : "border border-gray-200 text-gray-700 hover:bg-gray-50"
+                }`}
+              >
+                {i + 1}
+              </button>
+            ))}
+          </div>
+          <button
+            type={"button" as const}
+            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+            disabled={currentPage === totalPages}
+            className="px-3 py-1 rounded-lg border border-gray-200 text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
+      </div>
+
+      {/* Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="bg-white rounded-xl border border-gray-200 p-4">
+          <div className="text-sm text-gray-600">Total Questions</div>
+          <div className="text-2xl font-bold text-gray-900 mt-2">{questions.length}</div>
+        </div>
+        <div className="bg-white rounded-xl border border-gray-200 p-4">
+          <div className="text-sm text-gray-600">Active</div>
+          <div className="text-2xl font-bold text-emerald-600 mt-2">
+            {questions.filter((q) => q.status === "Active").length}
+          </div>
+        </div>
+        <div className="bg-white rounded-xl border border-gray-200 p-4">
+          <div className="text-sm text-gray-600">Avg Correct Rate</div>
+          <div className="text-2xl font-bold text-pink-600 mt-2">
+            {(
+              questions.reduce((acc, q) => acc + q.usageStats.correctRate, 0) /
+              Math.max(1, questions.length)
+            ).toFixed(2)}
+          </div>
+        </div>
       </div>
     </div>
   );
 }
-

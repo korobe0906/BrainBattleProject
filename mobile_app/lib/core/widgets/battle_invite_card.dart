@@ -1,19 +1,29 @@
 import 'package:flutter/material.dart';
-import '../../core/theme/palette.dart';
-import '../../core/theme/tokens.dart';   
-import 'bb_card.dart';
-import 'bb_button.dart';
 
+import '../../core/theme/app_spacing.dart';
+import '../../core/theme/theme_extensions.dart';
+import 'bb_button.dart';
+import 'bb_card.dart';
 
 class BattleInviteCard extends StatelessWidget {
-  final String title; // e.g., "JLPT N5 – 1v1"
-  final String subtitle; // e.g., "Starts in 10 min • Created by @Hana"
+  final String title;
+  final String subtitle;
   final VoidCallback onJoin;
   final VoidCallback? onDetails;
-  const BattleInviteCard({super.key, required this.title, required this.subtitle, required this.onJoin, this.onDetails});
+
+  const BattleInviteCard({
+    super.key,
+    required this.title,
+    required this.subtitle,
+    required this.onJoin,
+    this.onDetails,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final app = context.appTokens.colors;
+    final battle = context.battleTokens.colors;
+
     return BBCard(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -22,28 +32,67 @@ class BattleInviteCard extends StatelessWidget {
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              gradient: const SweepGradient(colors: [BBPalette.pink, BBPalette.purple, BBPalette.pink]),
-              boxShadow: BBShadows.neon,
+              gradient: LinearGradient(
+                colors: [
+                  battle.accent,
+                  battle.accentSoft,
+                  battle.accent,
+                ],
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: battle.glow,
+                  blurRadius: 18,
+                  offset: const Offset(0, 8),
+                ),
+              ],
             ),
-            child: const Icon(Icons.sports_martial_arts, size: 20),
+            child: Icon(
+              Icons.sports_martial_arts,
+              size: 20,
+              color: app.textInverse,
+            ),
           ),
           const SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w800,
+                    color: app.textPrimary,
+                  ),
+                ),
                 const SizedBox(height: 6),
-                Text(subtitle, style: const TextStyle(color: BBPalette.textDim)),
+                Text(
+                  subtitle,
+                  style: TextStyle(
+                    color: app.textSecondary,
+                  ),
+                ),
                 const SizedBox(height: 12),
-                Row(children: [
-                  BBButton.primary('Join Now', onPressed: onJoin, icon: Icons.flash_on),
-                  const SizedBox(width: 10),
-                  BBButton.ghost('Details', onPressed: onDetails, icon: Icons.info_outline),
-                ])
+                Wrap(
+                  spacing: 10,
+                  runSpacing: 10,
+                  children: [
+                    BBButton.primary(
+                      'Join Now',
+                      onPressed: onJoin,
+                      icon: Icons.flash_on,
+                    ),
+                    BBButton.ghost(
+                      'Details',
+                      onPressed: onDetails,
+                      icon: Icons.info_outline,
+                    ),
+                  ],
+                ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );

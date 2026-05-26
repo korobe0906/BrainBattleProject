@@ -1,11 +1,11 @@
-import 'package:flutter/material.dart';
+/*import 'package:flutter/material.dart';
 import 'core/theme/app_theme.dart';
 
 import 'features/auth/splash/splash_page.dart';
 import 'features/auth/starter/starter_page.dart';
 import 'features/auth/login/login_page.dart';
 import 'features/auth/signup/sign_up_page.dart';
-import 'features/auth/verify/verify_otp_page.dart';
+import 'features/auth/verify/verify_email_page.dart';
 import 'features/auth/complete/complete_profile_page.dart';
 import 'features/auth/forgot/forgot_start_page.dart';
 import 'features/auth/forgot/forgot_otp_page.dart';
@@ -65,7 +65,7 @@ class BrainBattleApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: bbLightTheme(),
       darkTheme: bbDarkTheme(),
-      themeMode: ThemeMode.dark,
+      themeMode: ThemeMode.system,
       home: kDebugOpenAppShell ? const MainShell() : const SplashPage(),
       routes: {
         StarterPage.routeName: (_) => const StarterPage(),
@@ -133,7 +133,8 @@ class BrainBattleApp extends StatelessWidget {
         LearningRoutes.placementTest: (_) => const PlacementTestPage(),
         BattleRoutes.root: (_) => const BattleFlow(),
         MainShell.routeName: (_) => const MainShell(),
-        AppShell.routeName: (_) => const AppShell(), // Deprecated but kept for compatibility
+        AppShell.routeName: (_) =>
+            const AppShell(), // Deprecated but kept for compatibility
         LoginPage.routeName: (_) => const LoginPage(),
         SignUpPage.routeName: (_) => const SignUpPage(),
         VerifyOtpPage.routeName: (ctx) {
@@ -170,6 +171,126 @@ class BrainBattleApp extends StatelessWidget {
             otp: otp,
           );
         },
+      },
+      onUnknownRoute: (_) =>
+          MaterialPageRoute(builder: (_) => const StarterPage()),
+    );
+  }
+}
+*/
+import 'dart:async';
+
+import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+import 'core/theme/app_theme.dart';
+import 'features/auth/forgot/forgot_password_page.dart';
+import 'features/auth/forgot/reset_password_page.dart';
+import 'features/auth/login/login_page.dart';
+import 'features/auth/signup/sign_up_page.dart';
+import 'features/auth/splash/splash_page.dart';
+import 'features/auth/starter/starter_page.dart';
+import 'features/auth/verify/verify_email_page.dart';
+import 'features/profile/ui/learner_profile_page.dart';
+
+class BrainBattleApp extends StatefulWidget {
+  const BrainBattleApp({super.key});
+
+  static _BrainBattleAppState of(BuildContext context) =>
+      context.findAncestorStateOfType<_BrainBattleAppState>()!;
+
+  @override
+  State<BrainBattleApp> createState() => _BrainBattleAppState();
+}
+
+class _BrainBattleAppState extends State<BrainBattleApp> {
+  ThemeMode _themeMode = ThemeMode.dark;
+  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
+
+  StreamSubscription<AuthState>? _authSub;
+
+  ThemeMode get themeMode => _themeMode;
+
+  void toggleTheme() {
+    setState(() {
+      _themeMode =
+          _themeMode == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark;
+    });
+  }
+
+  void setThemeMode(ThemeMode mode) {
+    setState(() {
+      _themeMode = mode;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    _authSub = Supabase.instance.client.auth.onAuthStateChange.listen((data) {
+      final event = data.event;
+      final navigator = _navigatorKey.currentState;
+
+      if (navigator == null) return;
+
+      switch (event) {
+        case AuthChangeEvent.passwordRecovery:
+          navigator.pushNamed(
+            ResetPasswordPage.routeName,
+            arguments: {
+              'email': Supabase.instance.client.auth.currentUser?.email ?? '',
+            },
+          );
+          break;
+        default:
+          break;
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _authSub?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      navigatorKey: _navigatorKey,
+      title: 'BrainBattle',
+      debugShowCheckedModeBanner: false,
+      theme: bbLightTheme(),
+      darkTheme: bbDarkTheme(),
+      themeMode: _themeMode,
+      home: const SplashPage(),
+      routes: {
+        StarterPage.routeName: (_) => const StarterPage(),
+        LoginPage.routeName: (_) => const LoginPage(),
+        SignUpPage.routeName: (_) => const SignUpPage(),
+        ForgotPasswordPage.routeName: (_) => const ForgotPasswordPage(),
+        LearnerProfilePage.routeName: (_) => const LearnerProfilePage(),
+      },
+      onGenerateRoute: (settings) {
+        switch (settings.name) {
+          case VerifyEmailPage.routeName:
+            final args = settings.arguments as Map<String, dynamic>?;
+            return MaterialPageRoute(
+              builder: (_) => VerifyEmailPage(
+                email: (args?['email'] as String?) ?? '',
+              ),
+            );
+
+          case ResetPasswordPage.routeName:
+            final args = settings.arguments as Map<String, dynamic>?;
+            return MaterialPageRoute(
+              builder: (_) => ResetPasswordPage(
+                email: (args?['email'] as String?) ?? '',
+              ),
+            );
+        }
+        return null;
       },
       onUnknownRoute: (_) =>
           MaterialPageRoute(builder: (_) => const StarterPage()),

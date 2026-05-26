@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Download, UserPlus, ShieldAlert } from "lucide-react";
+import { Download, UserPlus, ShieldAlert, Plus, Upload, FileUp, Tags, Users, MessageSquare, Ban, Hash } from "lucide-react";
 
 const pageInfo: Record<string, { title: string; description: string }> = {
   "/admin": {
@@ -25,7 +25,38 @@ const pageInfo: Record<string, { title: string; description: string }> = {
     title: "Violation Reports",
     description: "Review reports, moderate content, and apply penalties",
   },
-
+  "/admin/learning/units": {
+    title: "AIM Lessons",
+    description: "Manage lesson content, structure, and publishing",
+  },
+  "/admin/learning/questions": {
+    title: "Question Bank",
+    description: "Manage questions, difficulty, and usage across lessons",
+  },
+  "/admin/learning/import-export": {
+    title: "Import / Export",
+    description: "Bulk upload and export learning content",
+  },
+  "/admin/learning/tags": {
+    title: "Metadata Tags",
+    description: "Organize lessons and questions using standardized tags",
+  },
+  "/admin/clans/clan-list": {
+    title: "Clan List",
+    description: "Manage clans, members, and activity",
+  },
+  "/admin/clans/chat-history": {
+    title: "Chat History",
+    description: "Review clan chat messages and moderation logs",
+  },
+  "/admin/clans/blocked-clans": {
+    title: "Blocked Clans",
+    description: "Manage clans blocked from the system",
+  },
+  "/admin/clans/search-topics": {
+    title: "Search Topics",
+    description: "Search and manage clan topics/tags",
+  },
 };
 
 export default function Header() {
@@ -37,6 +68,14 @@ export default function Header() {
   const isLearnerList = pathname === "/admin/users/learners";
   const isCreatorPage = pathname === "/admin/users/creators";
   const isViolationPage = pathname === "/admin/users/violations";
+  const isLessonsPage = pathname === "/admin/learning/units";
+  const isQuestionsPage = pathname === "/admin/learning/questions";
+  const isImportExportPage = pathname === "/admin/learning/import-export";
+  const isTagsPage = pathname === "/admin/learning/tags";
+  const isClanListPage = pathname === "/admin/clans/clan-list";
+  const isChatHistoryPage = pathname === "/admin/clans/chat-history";
+  const isBlockedClansPage = pathname === "/admin/clans/blocked-clans";
+  const isSearchTopicsPage = pathname === "/admin/clans/search-topics";
 
   return (
     <header
@@ -76,7 +115,7 @@ export default function Header() {
       {isDashboard && (
         <div className="flex items-center gap-3">
           <button
-            type="button"
+            type={"button" as const}
             className="
               px-4 py-2 rounded-full text-sm font-medium
               bg-rose-100 text-rose-600 
@@ -88,7 +127,7 @@ export default function Header() {
           </button>
 
           <button
-            type="button"
+            type={"button" as const}
             className="
               inline-flex items-center gap-2 text-sm font-semibold
               px-4 py-2 rounded-xl
@@ -106,7 +145,7 @@ export default function Header() {
 
       {isLearnerList && (
         <button
-          type="button"
+          type={"button" as const}
           className="
     inline-flex items-center gap-2 text-sm font-semibold
     px-4 py-2 rounded-xl
@@ -129,7 +168,7 @@ export default function Header() {
 
           {/* Soft gradient button */}
           <button
-            type="button"
+            type={"button" as const}
             className="
         inline-flex items-center gap-2 text-sm font-semibold
         px-4 py-2 rounded-xl
@@ -152,7 +191,7 @@ export default function Header() {
         <div className="flex items-center gap-3">
           {/* Primary action */}
           <button
-            type="button"
+            type={"button" as const}
             className="
               inline-flex items-center gap-2 text-sm font-semibold
               px-4 py-2 rounded-xl
@@ -167,7 +206,7 @@ export default function Header() {
 
           {/* Secondary action */}
           <button
-            type="button"
+            type={"button" as const}
             className="
               inline-flex items-center gap-2 text-sm font-semibold
               px-4 py-2 rounded-xl
@@ -184,7 +223,205 @@ export default function Header() {
         </div>
       )}
 
-      {!isDashboard && !isLearnerList && !isCreatorPage && !isViolationPage && (
+      {isLessonsPage && (
+        <div className="flex items-center gap-3">
+          <button
+            type={"button" as const}
+            className="
+              inline-flex items-center gap-2 text-sm font-semibold
+              px-4 py-2 rounded-xl
+              bg-gradient-to-r from-white via-pink-50 to-white
+              text-gray-800
+              border border-pink-200 shadow-sm
+              hover:bg-pink-50 hover:border-pink-300
+              active:opacity-80 transition
+            "
+          >
+            <Download className="w-4 h-4 text-pink-500" />
+            Export CSV
+          </button>
+          <button
+            type={"button" as const}
+            className="
+              inline-flex items-center gap-2 text-sm font-semibold
+              px-4 py-2 rounded-xl
+              bg-gradient-to-r from-pink-500 to-purple-500
+              text-white shadow-sm
+              hover:opacity-90 transition
+            "
+          >
+            <Plus className="w-4 h-4" />
+            Create Lesson
+          </button>
+        </div>
+      )}
+
+      {isQuestionsPage && (
+        <div className="flex items-center gap-3">
+          <button
+            type={"button" as const}
+            className="
+              inline-flex items-center gap-2 text-sm font-semibold
+              px-4 py-2 rounded-xl
+              bg-gradient-to-r from-white via-pink-50 to-white
+              text-gray-800
+              border border-pink-200 shadow-sm
+              hover:bg-pink-50 hover:border-pink-300
+              active:opacity-80 transition
+            "
+          >
+            <Upload className="w-4 h-4 text-pink-500" />
+            Import
+          </button>
+          <button
+            type={"button" as const}
+            className="
+              inline-flex items-center gap-2 text-sm font-semibold
+              px-4 py-2 rounded-xl
+              bg-gradient-to-r from-pink-500 to-purple-500
+              text-white shadow-sm
+              hover:opacity-90 transition
+            "
+          >
+            <Plus className="w-4 h-4" />
+            Create Question
+          </button>
+        </div>
+      )}
+
+      {isImportExportPage && (
+        <div className="flex items-center gap-3">
+          <button
+            type={"button" as const}
+            className="
+              inline-flex items-center gap-2 text-sm font-semibold
+              px-4 py-2 rounded-xl
+              bg-gradient-to-r from-white via-pink-50 to-white
+              text-gray-800
+              border border-pink-200 shadow-sm
+              hover:bg-pink-50 hover:border-pink-300
+              active:opacity-80 transition
+            "
+          >
+            <Download className="w-4 h-4 text-pink-500" />
+            New Export
+          </button>
+          <button
+            type={"button" as const}
+            className="
+              inline-flex items-center gap-2 text-sm font-semibold
+              px-4 py-2 rounded-xl
+              bg-gradient-to-r from-pink-500 to-purple-500
+              text-white shadow-sm
+              hover:opacity-90 transition
+            "
+          >
+            <FileUp className="w-4 h-4" />
+            New Import
+          </button>
+        </div>
+      )}
+
+      {isTagsPage && (
+        <button
+          type={"button" as const}
+          className="
+            inline-flex items-center gap-2 text-sm font-semibold
+            px-4 py-2 rounded-xl
+            bg-gradient-to-r from-pink-500 to-purple-500
+            text-white shadow-sm
+            hover:opacity-90 transition
+          "
+        >
+          <Tags className="w-4 h-4" />
+          Create Tag
+        </button>
+      )}
+
+      {isClanListPage && (
+        <div className="flex items-center gap-3">
+          <button
+            type={"button" as const}
+            className="
+              inline-flex items-center gap-2 text-sm font-semibold
+              px-4 py-2 rounded-xl
+              bg-gradient-to-r from-white via-pink-50 to-white
+              text-gray-800
+              border border-pink-200 shadow-sm
+              hover:bg-pink-50 hover:border-pink-300
+              active:opacity-80 transition
+            "
+          >
+            <Download className="w-4 h-4 text-pink-500" />
+            Export CSV
+          </button>
+          <button
+            type={"button" as const}
+            className="
+              inline-flex items-center gap-2 text-sm font-semibold
+              px-4 py-2 rounded-xl
+              bg-gradient-to-r from-pink-500 to-purple-500
+              text-white shadow-sm
+              hover:opacity-90 transition
+            "
+          >
+            <Users className="w-4 h-4" />
+            Create Clan
+          </button>
+        </div>
+      )}
+
+      {isChatHistoryPage && (
+        <button
+          type={"button" as const}
+          className="
+            inline-flex items-center gap-2 text-sm font-semibold
+            px-4 py-2 rounded-xl
+            bg-gradient-to-r from-white via-pink-50 to-white
+            text-gray-800
+            border border-pink-200 shadow-sm
+            hover:bg-pink-50 hover:border-pink-300
+            active:opacity-80 transition
+          "
+        >
+          <MessageSquare className="w-4 h-4 text-pink-500" />
+          Moderation Queue
+        </button>
+      )}
+
+      {isBlockedClansPage && (
+        <button
+          type={"button" as const}
+          className="
+            inline-flex items-center gap-2 text-sm font-semibold
+            px-4 py-2 rounded-xl
+            bg-gradient-to-r from-pink-500 to-purple-500
+            text-white shadow-sm
+            hover:opacity-90 transition
+          "
+        >
+          <Ban className="w-4 h-4" />
+          Block Clan
+        </button>
+      )}
+
+      {isSearchTopicsPage && (
+        <button
+          type={"button" as const}
+          className="
+            inline-flex items-center gap-2 text-sm font-semibold
+            px-4 py-2 rounded-xl
+            bg-gradient-to-r from-pink-500 to-purple-500
+            text-white shadow-sm
+            hover:opacity-90 transition
+          "
+        >
+          <Hash className="w-4 h-4" />
+          Create Topic
+        </button>
+      )}
+
+      {!isDashboard && !isLearnerList && !isCreatorPage && !isViolationPage && !isLessonsPage && !isQuestionsPage && !isImportExportPage && !isTagsPage && !isClanListPage && !isChatHistoryPage && !isBlockedClansPage && !isSearchTopicsPage && (
         <div className="relative w-10 h-10 opacity-90">
           <Image
             src="/images/brainbattle_logo_really_pink.png"
