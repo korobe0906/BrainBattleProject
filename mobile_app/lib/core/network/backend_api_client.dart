@@ -41,9 +41,6 @@ class BackendApiClient {
 
           handler.next(options);
         },
-        onError: (error, handler) {
-          handler.next(error);
-        },
       ),
     );
 

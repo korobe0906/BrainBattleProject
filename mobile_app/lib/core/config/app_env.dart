@@ -26,9 +26,14 @@ class AppEnv {
     defaultValue: 'http://10.0.2.2:3001',
   );
 
-  static const String apiBaseUrl = String.fromEnvironment(
-    'API_BASE_URL',
-    defaultValue: battleApiBaseUrl,
+  static const String learningApiBaseUrl = String.fromEnvironment(
+    'LEARNING_API_BASE_URL',
+    defaultValue: 'http://10.0.2.2:3001/api/learning',
+  );
+
+  static const String shortVideoApiBaseUrl = String.fromEnvironment(
+    'SHORT_VIDEO_API_BASE_URL',
+    defaultValue: 'http://10.0.2.2:3003/api/short-video',
   );
 
   static const String authCallbackUrl = String.fromEnvironment(
@@ -41,39 +46,26 @@ class AppEnv {
     defaultValue: 'brainbattle://reset-password',
   );
 
-  static bool get isDevMode {
-    const value = String.fromEnvironment('APP_ENV', defaultValue: 'development');
-    return value != 'production';
-  }
+  static const String appEnv = String.fromEnvironment(
+    'APP_ENV',
+    defaultValue: 'development',
+  );
+
+  static bool get isProduction => appEnv == 'production';
+
+  static bool get isDevMode => !isProduction;
 
   static void validate() {
     final missing = <String>[];
 
-    if (supabaseUrl.isEmpty) {
-      missing.add('SUPABASE_URL');
-    }
-
-    if (supabaseAnonKey.isEmpty ||
-        supabaseAnonKey == 'PASTE_YOUR_SUPABASE_ANON_KEY_HERE') {
-      missing.add('SUPABASE_ANON_KEY');
-    }
-
-    if (authApiBaseUrl.isEmpty) {
-      missing.add('AUTH_API_BASE_URL');
-    }
-
-    if (battleApiBaseUrl.isEmpty) {
-      missing.add('BATTLE_API_BASE_URL');
-    }
-
-    if (battleSocketUrl.isEmpty) {
-      missing.add('BATTLE_SOCKET_URL');
-    }
+    if (supabaseUrl.isEmpty) missing.add('SUPABASE_URL');
+    if (supabaseAnonKey.isEmpty) missing.add('SUPABASE_ANON_KEY');
+    if (authApiBaseUrl.isEmpty) missing.add('AUTH_API_BASE_URL');
+    if (battleApiBaseUrl.isEmpty) missing.add('BATTLE_API_BASE_URL');
+    if (battleSocketUrl.isEmpty) missing.add('BATTLE_SOCKET_URL');
 
     if (missing.isNotEmpty) {
-      throw StateError(
-        'Missing required config values: ${missing.join(', ')}',
-      );
+      throw StateError('Missing required config values: ${missing.join(', ')}');
     }
   }
 }
