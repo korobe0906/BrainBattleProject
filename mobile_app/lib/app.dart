@@ -191,6 +191,7 @@ import 'features/auth/signup/sign_up_page.dart';
 import 'features/auth/splash/splash_page.dart';
 import 'features/auth/starter/starter_page.dart';
 import 'features/auth/verify/verify_email_page.dart';
+import 'features/auth/callback/auth_callback_page.dart';
 import 'features/profile/ui/learner_profile_page.dart';
 
 class BrainBattleApp extends StatefulWidget {
@@ -213,8 +214,9 @@ class _BrainBattleAppState extends State<BrainBattleApp> {
 
   void toggleTheme() {
     setState(() {
-      _themeMode =
-          _themeMode == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark;
+      _themeMode = _themeMode == ThemeMode.dark
+          ? ThemeMode.light
+          : ThemeMode.dark;
     });
   }
 
@@ -235,14 +237,17 @@ class _BrainBattleAppState extends State<BrainBattleApp> {
       if (navigator == null) return;
 
       switch (event) {
-        case AuthChangeEvent.passwordRecovery:
-          navigator.pushNamed(
-            ResetPasswordPage.routeName,
-            arguments: {
-              'email': Supabase.instance.client.auth.currentUser?.email ?? '',
-            },
+        case AuthChangeEvent.signedIn:
+          navigator.pushNamedAndRemoveUntil(
+            LoginPage.routeName,
+            (route) => false,
           );
           break;
+
+        case AuthChangeEvent.passwordRecovery:
+          navigator.pushNamed(ResetPasswordPage.routeName);
+          break;
+
         default:
           break;
       }
@@ -271,23 +276,22 @@ class _BrainBattleAppState extends State<BrainBattleApp> {
         SignUpPage.routeName: (_) => const SignUpPage(),
         ForgotPasswordPage.routeName: (_) => const ForgotPasswordPage(),
         LearnerProfilePage.routeName: (_) => const LearnerProfilePage(),
+        AuthCallbackPage.routeName: (_) => const AuthCallbackPage(),
       },
       onGenerateRoute: (settings) {
         switch (settings.name) {
           case VerifyEmailPage.routeName:
             final args = settings.arguments as Map<String, dynamic>?;
             return MaterialPageRoute(
-              builder: (_) => VerifyEmailPage(
-                email: (args?['email'] as String?) ?? '',
-              ),
+              builder: (_) =>
+                  VerifyEmailPage(email: (args?['email'] as String?) ?? ''),
             );
 
           case ResetPasswordPage.routeName:
             final args = settings.arguments as Map<String, dynamic>?;
             return MaterialPageRoute(
-              builder: (_) => ResetPasswordPage(
-                email: (args?['email'] as String?) ?? '',
-              ),
+              builder: (_) =>
+                  ResetPasswordPage(email: (args?['email'] as String?) ?? ''),
             );
         }
         return null;

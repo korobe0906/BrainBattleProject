@@ -11,7 +11,8 @@ class SupabaseBootstrap {
     AppEnv.validate();
 
     debugPrint('SUPABASE: url=${AppEnv.supabaseUrl}');
-    debugPrint('SUPABASE: apiBaseUrl=${AppEnv.apiBaseUrl}');
+    debugPrint('SUPABASE: authApiBaseUrl=${AppEnv.authApiBaseUrl}');
+    debugPrint('SUPABASE: battleApiBaseUrl=${AppEnv.battleApiBaseUrl}');
     debugPrint('SUPABASE: anon key empty=${AppEnv.supabaseAnonKey.isEmpty}');
 
     await Supabase.initialize(

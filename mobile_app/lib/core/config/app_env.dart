@@ -3,17 +3,37 @@ class AppEnv {
 
   static const String supabaseUrl = String.fromEnvironment(
     'SUPABASE_URL',
-    defaultValue: 'https://cenfiargplvysqpalcja.supabase.co',
+    defaultValue: '',
   );
 
   static const String supabaseAnonKey = String.fromEnvironment(
     'SUPABASE_ANON_KEY',
-    defaultValue: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlbmZpYXJncGx2eXNxcGFsY2phIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU5MDAyODcsImV4cCI6MjA5MTQ3NjI4N30.kig_YLey-Zr9nv_Hh5PxPzPS18GelD013Q5yT9NQIMI',
+    defaultValue: '',
   );
 
-  static const String apiBaseUrl = String.fromEnvironment(
-    'API_BASE_URL',
-    defaultValue: 'http://192.168.1.169:3000',
+  static const String authApiBaseUrl = String.fromEnvironment(
+    'AUTH_API_BASE_URL',
+    defaultValue: 'http://10.0.2.2:3000',
+  );
+
+  static const String battleApiBaseUrl = String.fromEnvironment(
+    'BATTLE_API_BASE_URL',
+    defaultValue: 'http://10.0.2.2:3001/api',
+  );
+
+  static const String battleSocketUrl = String.fromEnvironment(
+    'BATTLE_SOCKET_URL',
+    defaultValue: 'http://10.0.2.2:3001',
+  );
+
+  static const String learningApiBaseUrl = String.fromEnvironment(
+    'LEARNING_API_BASE_URL',
+    defaultValue: 'http://10.0.2.2:3001/api/learning',
+  );
+
+  static const String shortVideoApiBaseUrl = String.fromEnvironment(
+    'SHORT_VIDEO_API_BASE_URL',
+    defaultValue: 'http://10.0.2.2:3003/api/short-video',
   );
 
   static const String authCallbackUrl = String.fromEnvironment(
@@ -26,20 +46,26 @@ class AppEnv {
     defaultValue: 'brainbattle://reset-password',
   );
 
+  static const String appEnv = String.fromEnvironment(
+    'APP_ENV',
+    defaultValue: 'development',
+  );
+
+  static bool get isProduction => appEnv == 'production';
+
+  static bool get isDevMode => !isProduction;
+
   static void validate() {
     final missing = <String>[];
 
     if (supabaseUrl.isEmpty) missing.add('SUPABASE_URL');
-    if (supabaseAnonKey.isEmpty ||
-        supabaseAnonKey == 'PASTE_YOUR_SUPABASE_ANON_KEY_HERE') {
-      missing.add('SUPABASE_ANON_KEY');
-    }
-    if (apiBaseUrl.isEmpty) missing.add('API_BASE_URL');
+    if (supabaseAnonKey.isEmpty) missing.add('SUPABASE_ANON_KEY');
+    if (authApiBaseUrl.isEmpty) missing.add('AUTH_API_BASE_URL');
+    if (battleApiBaseUrl.isEmpty) missing.add('BATTLE_API_BASE_URL');
+    if (battleSocketUrl.isEmpty) missing.add('BATTLE_SOCKET_URL');
 
     if (missing.isNotEmpty) {
-      throw StateError(
-        'Missing required config values: ${missing.join(', ')}',
-      );
+      throw StateError('Missing required config values: ${missing.join(', ')}');
     }
   }
 }

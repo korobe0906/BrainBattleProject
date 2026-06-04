@@ -1,16 +1,13 @@
-/**
- * API Configuration
- * 
- * Base URL for dou-service (learning/admin APIs)
- * Can be overridden via NEXT_PUBLIC_DOU_API_URL environment variable
- */
-export const API_BASE_URL = 
-  process.env.NEXT_PUBLIC_DOU_API_URL || 'http://localhost:4003/api';
+export const AUTH_API_BASE_URL =
+  process.env.NEXT_PUBLIC_AUTH_API_URL || 'http://localhost:3000';
 
-/**
- * Admin API Key for authentication
- * Can be overridden via NEXT_PUBLIC_ADMIN_API_KEY environment variable
- */
-export const ADMIN_API_KEY = 
-  process.env.NEXT_PUBLIC_ADMIN_API_KEY || 'dev-admin';
+export const BATTLE_API_BASE_URL =
+  process.env.NEXT_PUBLIC_BATTLE_API_URL || 'http://localhost:3001/api';
 
+export const BATTLE_SOCKET_URL =
+  process.env.NEXT_PUBLIC_BATTLE_SOCKET_URL || 'http://localhost:3001';
+
+export const APP_ENV =
+  process.env.NEXT_PUBLIC_APP_ENV || 'development';
+
+export const IS_PRODUCTION = APP_ENV === 'production';

@@ -5,9 +5,21 @@ import '../config/app_env.dart';
 
 class BackendApiClient {
   BackendApiClient._internal() {
-    _dio = Dio(
+    authDio = _createDio(AppEnv.authApiBaseUrl);
+    battleDio = _createDio(AppEnv.battleApiBaseUrl);
+    dio = battleDio;
+  }
+
+  late final Dio dio;
+  late final Dio authDio;
+  late final Dio battleDio;
+
+  static final BackendApiClient instance = BackendApiClient._internal();
+
+  Dio _createDio(String baseUrl) {
+    final client = Dio(
       BaseOptions(
-        baseUrl: AppEnv.apiBaseUrl,
+        baseUrl: baseUrl,
         connectTimeout: const Duration(seconds: 20),
         receiveTimeout: const Duration(seconds: 20),
         sendTimeout: const Duration(seconds: 20),
@@ -18,7 +30,7 @@ class BackendApiClient {
       ),
     );
 
-    _dio.interceptors.add(
+    client.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) {
           final token = Supabase.instance.client.auth.currentSession?.accessToken;
@@ -31,11 +43,7 @@ class BackendApiClient {
         },
       ),
     );
+
+    return client;
   }
-
-  late final Dio _dio;
-
-  static final BackendApiClient instance = BackendApiClient._internal();
-
-  Dio get dio => _dio;
 }
