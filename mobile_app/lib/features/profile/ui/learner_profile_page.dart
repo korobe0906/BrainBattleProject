@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../../../app.dart';
 import '../../../core/services/auth_session_service.dart';
+import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/theme_extensions.dart';
+import '../../../core/widgets/neon/neon_scaffold.dart';
 import '../../auth/data/api/auth_context_api.dart';
 import '../../auth/data/models/auth_me_response.dart';
 import '../../auth/login/login_page.dart';
@@ -68,54 +69,26 @@ class _LearnerProfilePageState extends State<LearnerProfilePage> {
   @override
   Widget build(BuildContext context) {
     final app = context.appTokens.colors;
-    final auth = context.authTokens.colors;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    final content = ProfileContent(
-      loading: _loading,
-      authContext: _authContext,
-      onRefresh: _loadProfile,
-      onLogout: _logout,
-    );
-
-    if (widget.embedded) return content;
-
-    return Scaffold(
-      backgroundColor: app.backgroundPrimary,
-      appBar: AppBar(
-        backgroundColor: app.backgroundPrimary,
-        elevation: 0,
-        centerTitle: false,
-        title: Text(
-          'PROFILE',
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                color: auth.accent,
-                fontWeight: FontWeight.w900,
-                letterSpacing: 0.8,
-              ),
+    return NeonScaffold(
+      title: 'Profile',
+      subtitle: 'Account, learning profile and reward identity.',
+      showBack: !widget.embedded,
+      scrollable: false,
+      padding: EdgeInsets.zero,
+      actions: [
+        IconButton(
+          tooltip: 'Refresh',
+          onPressed: _loadProfile,
+          icon: Icon(Icons.refresh_rounded, color: app.textPrimary),
         ),
-        actions: [
-          IconButton(
-            tooltip: 'Refresh',
-            onPressed: _loadProfile,
-            icon: Icon(Icons.refresh_rounded, color: app.textPrimary),
-          ),
-          IconButton(
-            tooltip: 'Toggle theme',
-            onPressed: () => BrainBattleApp.of(context).toggleTheme(),
-            icon: Icon(
-              isDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
-              color: app.textPrimary,
-            ),
-          ),
-          IconButton(
-            tooltip: 'Logout',
-            onPressed: _logout,
-            icon: Icon(Icons.logout_rounded, color: app.textPrimary),
-          ),
-        ],
+      ],
+      child: ProfileContent(
+        loading: _loading,
+        authContext: _authContext,
+        onRefresh: _loadProfile,
+        onLogout: _logout,
       ),
-      body: content,
     );
   }
 }
