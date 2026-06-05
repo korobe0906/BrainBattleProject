@@ -32,54 +32,15 @@ class AppSemanticColors {
     required this.info,
   });
 
-  AppSemanticColors copyWith({
-    Color? backgroundPrimary,
-    Color? backgroundSecondary,
-    Color? surfacePrimary,
-    Color? surfaceSecondary,
-    Color? borderSubtle,
-    Color? borderStrong,
-    Color? textPrimary,
-    Color? textSecondary,
-    Color? textInverse,
-    Color? success,
-    Color? warning,
-    Color? error,
-    Color? info,
-  }) {
-    return AppSemanticColors(
-      backgroundPrimary: backgroundPrimary ?? this.backgroundPrimary,
-      backgroundSecondary: backgroundSecondary ?? this.backgroundSecondary,
-      surfacePrimary: surfacePrimary ?? this.surfacePrimary,
-      surfaceSecondary: surfaceSecondary ?? this.surfaceSecondary,
-      borderSubtle: borderSubtle ?? this.borderSubtle,
-      borderStrong: borderStrong ?? this.borderStrong,
-      textPrimary: textPrimary ?? this.textPrimary,
-      textSecondary: textSecondary ?? this.textSecondary,
-      textInverse: textInverse ?? this.textInverse,
-      success: success ?? this.success,
-      warning: warning ?? this.warning,
-      error: error ?? this.error,
-      info: info ?? this.info,
-    );
-  }
-
   static AppSemanticColors lerp(
     AppSemanticColors a,
     AppSemanticColors b,
     double t,
   ) {
     return AppSemanticColors(
-      backgroundPrimary: Color.lerp(
-        a.backgroundPrimary,
-        b.backgroundPrimary,
-        t,
-      )!,
-      backgroundSecondary: Color.lerp(
-        a.backgroundSecondary,
-        b.backgroundSecondary,
-        t,
-      )!,
+      backgroundPrimary: Color.lerp(a.backgroundPrimary, b.backgroundPrimary, t)!,
+      backgroundSecondary:
+          Color.lerp(a.backgroundSecondary, b.backgroundSecondary, t)!,
       surfacePrimary: Color.lerp(a.surfacePrimary, b.surfacePrimary, t)!,
       surfaceSecondary: Color.lerp(a.surfaceSecondary, b.surfaceSecondary, t)!,
       borderSubtle: Color.lerp(a.borderSubtle, b.borderSubtle, t)!,
@@ -116,28 +77,6 @@ class AuthSemanticColors {
     required this.brandSecondary,
     required this.brandTertiary,
   });
-
-  AuthSemanticColors copyWith({
-    Color? accent,
-    Color? accentSoft,
-    Color? cardBackground,
-    Color? inputBackground,
-    Color? heroGlow,
-    Color? brandPrimary,
-    Color? brandSecondary,
-    Color? brandTertiary,
-  }) {
-    return AuthSemanticColors(
-      accent: accent ?? this.accent,
-      accentSoft: accentSoft ?? this.accentSoft,
-      cardBackground: cardBackground ?? this.cardBackground,
-      inputBackground: inputBackground ?? this.inputBackground,
-      heroGlow: heroGlow ?? this.heroGlow,
-      brandPrimary: brandPrimary ?? this.brandPrimary,
-      brandSecondary: brandSecondary ?? this.brandSecondary,
-      brandTertiary: brandTertiary ?? this.brandTertiary,
-    );
-  }
 
   static AuthSemanticColors lerp(
     AuthSemanticColors a,
@@ -177,26 +116,6 @@ class BattleSemanticColors {
     required this.danger,
   });
 
-  BattleSemanticColors copyWith({
-    Color? accent,
-    Color? accentSoft,
-    Color? panelBackground,
-    Color? panelBorder,
-    Color? glow,
-    Color? victory,
-    Color? danger,
-  }) {
-    return BattleSemanticColors(
-      accent: accent ?? this.accent,
-      accentSoft: accentSoft ?? this.accentSoft,
-      panelBackground: panelBackground ?? this.panelBackground,
-      panelBorder: panelBorder ?? this.panelBorder,
-      glow: glow ?? this.glow,
-      victory: victory ?? this.victory,
-      danger: danger ?? this.danger,
-    );
-  }
-
   static BattleSemanticColors lerp(
     BattleSemanticColors a,
     BattleSemanticColors b,
@@ -215,77 +134,77 @@ class BattleSemanticColors {
 }
 
 abstract final class AppColorSchemes {
+  static const AppSemanticColors dark = AppSemanticColors(
+    backgroundPrimary: Color(0xFF070B14),
+    backgroundSecondary: Color(0xFF111827),
+    surfacePrimary: Color(0xFF19142A),
+    surfaceSecondary: Color(0xFF251A3A),
+    borderSubtle: Color(0x334B2D75),
+    borderStrong: Color(0x995B2D91),
+    textPrimary: Color(0xFFFDF7FF),
+    textSecondary: Color(0xB8D7CFE6),
+    textInverse: Color(0xFF080A10),
+    success: Color(0xFF00D79F),
+    warning: Color(0xFFFFD600),
+    error: Color(0xFFFF4D6D),
+    info: Color(0xFF00D9FF),
+  );
+
   static const AppSemanticColors light = AppSemanticColors(
-    backgroundPrimary: Color(0xFFF8F7FB),
+    backgroundPrimary: Color(0xFFF8F4FF),
     backgroundSecondary: Color(0xFFFFFFFF),
     surfacePrimary: Color(0xFFFFFFFF),
-    surfaceSecondary: Color(0xFFF2EEF7),
-    borderSubtle: Color(0x14000000),
-    borderStrong: Color(0x26000000),
-    textPrimary: Color(0xFF18141F),
-    textSecondary: Color(0xFF625B71),
+    surfaceSecondary: Color(0xFFF1E7FF),
+    borderSubtle: Color(0x334B2D75),
+    borderStrong: Color(0x665B2D91),
+    textPrimary: Color(0xFF161124),
+    textSecondary: Color(0xFF645772),
     textInverse: Color(0xFFFFFFFF),
-    success: Color(0xFF1F9D55),
-    warning: Color(0xFFB7791F),
-    error: Color(0xFFD64545),
-    info: Color(0xFF2B6CB0),
-  );
-
-  static const AppSemanticColors dark = AppSemanticColors(
-    backgroundPrimary: Color(0xFF000000),
-    backgroundSecondary: Color(0xFF141218),
-    surfacePrimary: Color(0xFF281E2C),
-    surfaceSecondary: Color(0xFF34233B),
-    borderSubtle: Color(0x1FFFFFFF),
-    borderStrong: Color(0x33FFFFFF),
-    textPrimary: Color(0xFFFFFFFF),
-    textSecondary: Color(0xB3FFFFFF),
-    textInverse: Color(0xFF000000),
-    success: Color(0xFF48BB78),
-    warning: Color(0xFFE9B949),
-    error: Color(0xFFFF6B6B),
-    info: Color(0xFF63B3ED),
-  );
-
-  static const AuthSemanticColors authLight = AuthSemanticColors(
-    accent: Color(0xFFFF8FAB),
-    accentSoft: Color(0xFFFDE2E8),
-    cardBackground: Color(0xFFFFFFFF),
-    inputBackground: Color(0xFFF6F2FA),
-    heroGlow: Color(0x1AFB6F92),
-    brandPrimary: Color(0xFFFF8FAB),
-    brandSecondary: Color(0xFFF3B4C3),
-    brandTertiary: Color(0xFFFFC4D6),
+    success: Color(0xFF00A77B),
+    warning: Color(0xFFE0A800),
+    error: Color(0xFFE4375D),
+    info: Color(0xFF0098C9),
   );
 
   static const AuthSemanticColors authDark = AuthSemanticColors(
-    accent: Color(0xFFFF8FAB),
-    accentSoft: Color(0xFFF3B4C3),
-    cardBackground: Color(0xFF281E2C),
-    inputBackground: Color(0xFF3A3150),
-    heroGlow: Color(0x22FB6F92),
-    brandPrimary: Color(0xFFFF8FAB),
-    brandSecondary: Color(0xFFF3B4C3),
-    brandTertiary: Color(0xFFFFC4D6),
+    accent: Color(0xFFC64BFF),
+    accentSoft: Color(0xFF4D1B76),
+    cardBackground: Color(0xD923173A),
+    inputBackground: Color(0xCC221832),
+    heroGlow: Color(0x55C64BFF),
+    brandPrimary: Color(0xFFFF70B8),
+    brandSecondary: Color(0xFFC64BFF),
+    brandTertiary: Color(0xFF19D4FF),
   );
 
-  static const BattleSemanticColors battleLight = BattleSemanticColors(
-    accent: Color(0xFF7C5CFA),
-    accentSoft: Color(0xFFE9E1FF),
-    panelBackground: Color(0xFFFFFFFF),
-    panelBorder: Color(0x1A000000),
-    glow: Color(0x147C5CFA),
-    victory: Color(0xFF22A06B),
-    danger: Color(0xFFE5484D),
+  static const AuthSemanticColors authLight = AuthSemanticColors(
+    accent: Color(0xFFA63CFF),
+    accentSoft: Color(0xFFEBD7FF),
+    cardBackground: Color(0xEFFFFFFF),
+    inputBackground: Color(0xFFF3E9FF),
+    heroGlow: Color(0x33A63CFF),
+    brandPrimary: Color(0xFFFF5DAE),
+    brandSecondary: Color(0xFFA63CFF),
+    brandTertiary: Color(0xFF00B7E6),
   );
 
   static const BattleSemanticColors battleDark = BattleSemanticColors(
-    accent: Color(0xFF9F7AEA),
-    accentSoft: Color(0xFF44337A),
-    panelBackground: Color(0xFF1F1B2E),
-    panelBorder: Color(0x33FFFFFF),
-    glow: Color(0x229F7AEA),
-    victory: Color(0xFF48BB78),
-    danger: Color(0xFFFF6B6B),
+    accent: Color(0xFF00D9FF),
+    accentSoft: Color(0xFF063A4D),
+    panelBackground: Color(0xDD15142A),
+    panelBorder: Color(0x663E2A73),
+    glow: Color(0x5500D9FF),
+    victory: Color(0xFF00D79F),
+    danger: Color(0xFFFF4D6D),
+  );
+
+  static const BattleSemanticColors battleLight = BattleSemanticColors(
+    accent: Color(0xFF00A8D6),
+    accentSoft: Color(0xFFD8F7FF),
+    panelBackground: Color(0xEEFFFFFF),
+    panelBorder: Color(0x334B2D75),
+    glow: Color(0x3300A8D6),
+    victory: Color(0xFF00A77B),
+    danger: Color(0xFFE4375D),
   );
 }

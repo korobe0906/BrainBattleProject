@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../core/theme/app_spacing.dart';
-import '../../../core/widgets/layout/auth_card.dart';
-import '../../../core/widgets/layout/auth_scaffold.dart';
+import '../../../core/widgets/neon/neon_button.dart';
+import '../../../core/widgets/neon/neon_card.dart';
+import '../../../core/widgets/neon/neon_scaffold.dart';
+import '../../../core/widgets/neon/neon_text_field.dart';
 import '../../auth/data/api/auth_context_api.dart';
 import '../../auth/data/models/auth_me_response.dart';
 import '../../auth/flow/auth_flow_router.dart';
@@ -96,56 +98,41 @@ class _CompleteProfilePageState extends State<CompleteProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    return AuthScaffold(
-      title: 'Complete Profile',
-      subtitle: 'Set up your real BrainBattle learner account.',
-      showBackButton: false,
-      child: AuthCard(
+    return NeonScaffold(
+      title: 'Profile Setup',
+      subtitle: 'Create your BrainBattle identity.',
+      showBack: false,
+      child: NeonCard(
         child: Form(
           key: _formKey,
           child: Column(
             children: [
-              TextFormField(
+              NeonTextField(
                 controller: _username,
+                label: 'Username',
+                prefixIcon: Icons.alternate_email_rounded,
                 validator: _validateUsername,
-                textInputAction: TextInputAction.next,
-                decoration: const InputDecoration(
-                  labelText: 'Username',
-                  prefixIcon: Icon(Icons.alternate_email_rounded),
-                ),
               ),
               const SizedBox(height: AppSpacing.md),
-              TextFormField(
+              NeonTextField(
                 controller: _displayName,
+                label: 'Display name',
+                prefixIcon: Icons.badge_rounded,
                 validator: _validateDisplayName,
-                textInputAction: TextInputAction.next,
-                decoration: const InputDecoration(
-                  labelText: 'Display name',
-                  prefixIcon: Icon(Icons.badge_rounded),
-                ),
               ),
               const SizedBox(height: AppSpacing.md),
-              TextFormField(
+              NeonTextField(
                 controller: _bio,
+                label: 'Bio',
+                prefixIcon: Icons.auto_awesome_rounded,
                 maxLines: 3,
-                decoration: const InputDecoration(
-                  labelText: 'Bio',
-                  prefixIcon: Icon(Icons.edit_note_rounded),
-                ),
               ),
               const SizedBox(height: AppSpacing.xl),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _loading ? null : _submit,
-                  child: _loading
-                      ? const SizedBox(
-                          width: 22,
-                          height: 22,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Text('Continue'),
-                ),
+              NeonButton(
+                label: 'Enter BrainBattle',
+                icon: Icons.rocket_launch_rounded,
+                loading: _loading,
+                onPressed: _submit,
               ),
             ],
           ),
