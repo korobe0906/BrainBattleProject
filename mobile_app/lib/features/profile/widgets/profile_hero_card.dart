@@ -5,7 +5,6 @@ import '../../../core/theme/theme_extensions.dart';
 import '../utils/profile_ui_helpers.dart';
 import 'profile_badge.dart';
 import 'profile_glass_card.dart';
-import 'profile_metric_tile.dart';
 
 class ProfileHeroCard extends StatelessWidget {
   const ProfileHeroCard({
@@ -34,115 +33,89 @@ class ProfileHeroCard extends StatelessWidget {
 
     return ProfileGlassCard(
       glowColor: auth.accent,
-      child: Column(
+      child: Row(
         children: [
-          Row(
-            children: [
-              Container(
-                width: 86,
-                height: 86,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: LinearGradient(
-                    colors: [
-                      auth.brandTertiary,
-                      auth.brandPrimary,
-                      battle.accent,
-                    ],
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: auth.accent.withOpacity(0.34),
-                      blurRadius: 28,
-                      offset: const Offset(0, 10),
-                    ),
-                  ],
+          Container(
+            width: 86,
+            height: 86,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: LinearGradient(
+                colors: [
+                  auth.brandPrimary,
+                  auth.brandSecondary,
+                  battle.accent,
+                ],
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: auth.accent.withOpacity(0.30),
+                  blurRadius: 28,
+                  offset: const Offset(0, 10),
                 ),
-                alignment: Alignment.center,
-                child: Text(
-                  profileInitials(displayName),
-                  style: text.headlineSmall?.copyWith(
-                    color: Colors.white,
+              ],
+            ),
+            alignment: Alignment.center,
+            child: Text(
+              profileInitials(displayName),
+              style: text.headlineSmall?.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+          ),
+          const SizedBox(width: AppSpacing.lg),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  displayName,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: text.titleLarge?.copyWith(
+                    color: app.textPrimary,
                     fontWeight: FontWeight.w900,
                   ),
                 ),
-              ),
-              const SizedBox(width: AppSpacing.lg),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                const SizedBox(height: 4),
+                Text(
+                  '@$username',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: text.bodyMedium?.copyWith(
+                    color: app.textSecondary,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  email,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: text.bodySmall?.copyWith(
+                    color: app.textSecondary,
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
                   children: [
-                    Text(
-                      displayName,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: text.titleLarge?.copyWith(
-                        color: app.textPrimary,
-                        fontWeight: FontWeight.w900,
-                      ),
+                    ProfileBadge(
+                      icon: Icons.verified_rounded,
+                      label: status,
+                      color: app.success,
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '@$username',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: text.bodyMedium?.copyWith(
-                        color: app.textSecondary,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      email,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: text.bodySmall?.copyWith(
-                        color: app.textSecondary,
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.sm),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: [
-                        ProfileBadge(
-                          icon: Icons.verified_rounded,
-                          label: status,
-                          color: app.success,
-                        ),
-                        ProfileBadge(
-                          icon: Icons.shield_rounded,
-                          label: roleText,
-                          color: auth.accent,
-                        ),
-                      ],
+                    ProfileBadge(
+                      icon: Icons.shield_rounded,
+                      label: roleText,
+                      color: auth.accent,
                     ),
                   ],
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.lg),
-          Row(
-            children: [
-              Expanded(
-                child: ProfileMetricTile(
-                  label: 'Rank',
-                  value: 'Gold II',
-                  icon: Icons.emoji_events_rounded,
-                  color: app.warning,
-                ),
-              ),
-              const SizedBox(width: AppSpacing.sm),
-              Expanded(
-                child: ProfileMetricTile(
-                  label: 'Stars',
-                  value: '3 / 5',
-                  icon: Icons.star_rounded,
-                  color: app.warning,
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),
