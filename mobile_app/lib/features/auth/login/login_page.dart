@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../core/widgets/layout/auth_scaffold.dart';
-import '../../profile/ui/learner_profile_page.dart';
+import '../flow/auth_flow_router.dart';
 import '../forgot/forgot_password_page.dart';
 import '../signup/sign_up_page.dart';
 import 'login_controller.dart';
@@ -61,19 +61,13 @@ class _LoginPageState extends State<LoginPage> {
     final ok = await _vm.login(_email.text.trim(), _password.text);
     if (!mounted) return;
 
-    if (ok) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Login successful')),
-      );
-      Navigator.of(context).pushReplacementNamed(
-        LearnerProfilePage.routeName,
-      );
+    if (ok && _vm.lastAuthMe != null) {
+      AuthFlowRouter.goByContext(context, _vm.lastAuthMe!);
       return;
     }
 
-    final err = _vm.error.value ?? 'Login failed';
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(err)),
+      SnackBar(content: Text(_vm.error.value ?? 'Login failed')),
     );
   }
 

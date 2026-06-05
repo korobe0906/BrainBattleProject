@@ -12,14 +12,12 @@ class LoginRepository {
   final SupabaseAuthService _authService;
   final AuthContextApi _authContextApi;
 
-  /// Sign in with Supabase, then verify/bootstrap current auth context
-  /// from backend `/auth/me`.
   Future<AuthMeResponse> login(String email, String password) async {
     await _authService.signIn(
       email: email,
       password: password,
     );
 
-    return _authContextApi.getMe();
+    return _authContextApi.bootstrap();
   }
 }
