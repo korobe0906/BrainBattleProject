@@ -8,8 +8,18 @@ class AuthContextApi {
 
   static final AuthContextApi instance = AuthContextApi._();
 
+  Future<AuthMeResponse> bootstrap() async {
+    final Response response =
+        await BackendApiClient.instance.authDio.post('/auth/bootstrap');
+
+    return AuthMeResponse.fromJson(
+      Map<String, dynamic>.from(response.data as Map),
+    );
+  }
+
   Future<AuthMeResponse> getMe() async {
-    final Response response = await BackendApiClient.instance.dio.get('/auth/me');
+    final Response response =
+        await BackendApiClient.instance.authDio.get('/auth/me');
 
     return AuthMeResponse.fromJson(
       Map<String, dynamic>.from(response.data as Map),

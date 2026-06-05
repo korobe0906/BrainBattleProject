@@ -7,8 +7,8 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/theme_extensions.dart';
 import '../../../core/widgets/brand/brand_logo.dart';
 import '../data/api/auth_context_api.dart';
+import '../flow/auth_flow_router.dart';
 import '../starter/starter_page.dart';
-import '../../profile/ui/learner_profile_page.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -32,18 +32,15 @@ class _SplashPageState extends State<SplashPage>
     final authSession = AuthSessionService.instance;
 
     if (!authSession.hasValidLookingSession) {
-      if (!mounted) return;
       _goToStarter();
       return;
     }
 
     try {
-      await AuthContextApi.instance.getMe();
+      final authContext = await AuthContextApi.instance.bootstrap();
 
       if (!mounted) return;
-      Navigator.of(context).pushReplacementNamed(
-        LearnerProfilePage.routeName,
-      );
+      AuthFlowRouter.goByContext(context, authContext);
     } catch (_) {
       await authSession.signOut();
 

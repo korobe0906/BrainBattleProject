@@ -1,3 +1,0 @@
-Supabase client/init
-Lưu ý: Supabase = Database + Storage + Realtime(dùng cho 3 e này thôi, còn lại tự code với NestJS)
-
