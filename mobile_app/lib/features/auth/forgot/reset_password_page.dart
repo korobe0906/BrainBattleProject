@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../../../core/widgets/layout/auth_scaffold.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/theme_extensions.dart';
+import '../../../core/widgets/neon/neon_button.dart';
+import '../../../core/widgets/neon/neon_card.dart';
+import '../../../core/widgets/neon/neon_scaffold.dart';
+import '../../../core/widgets/neon/neon_text_field.dart';
 import '../data/services/supabase_auth_service.dart';
 import '../login/login_page.dart';
-import 'widgets/reset_password_form.dart';
+import '../widgets/auth_neon_intro.dart';
 
 class ResetPasswordPage extends StatefulWidget {
   const ResetPasswordPage({
@@ -29,15 +34,22 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
   bool _obscureConfirmPassword = true;
   bool _loading = false;
 
-  String? _validatePassword(String? v) {
-    if (v == null || v.isEmpty) return 'Please enter your new password';
-    if (v.length < 6) return 'At least 6 characters';
+  @override
+  void dispose() {
+    _password.dispose();
+    _confirmPassword.dispose();
+    super.dispose();
+  }
+
+  String? _validatePassword(String? value) {
+    if (value == null || value.isEmpty) return 'Please enter your new password';
+    if (value.length < 6) return 'At least 6 characters';
     return null;
   }
 
-  String? _validateConfirmPassword(String? v) {
-    if (v == null || v.isEmpty) return 'Please confirm your password';
-    if (v != _password.text) return 'Passwords do not match';
+  String? _validateConfirmPassword(String? value) {
+    if (value == null || value.isEmpty) return 'Please confirm your password';
+    if (value != _password.text) return 'Passwords do not match';
     return null;
   }
 
@@ -69,47 +81,86 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
         SnackBar(content: Text(message)),
       );
     } finally {
-      if (mounted) {
-        setState(() => _loading = false);
-      }
+      if (mounted) setState(() => _loading = false);
     }
   }
 
   @override
-  void dispose() {
-    _password.dispose();
-    _confirmPassword.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final app = context.appTokens.colors;
     final currentEmail = Supabase.instance.client.auth.currentUser?.email;
-    final subtitle = widget.email.isNotEmpty ? widget.email : (currentEmail ?? '');
+    final subtitle = widget.email.isNotEmpty ? widget.email : currentEmail;
 
-    return AuthScaffold(
-      title: 'Create a new password',
-      subtitle: subtitle,
-      showBackButton: true,
-      child: ResetPasswordForm(
-        formKey: _formKey,
-        password: _password,
-        confirmPassword: _confirmPassword,
-        obscurePassword: _obscurePassword,
-        obscureConfirmPassword: _obscureConfirmPassword,
-        togglePassword: () {
-          setState(() {
-            _obscurePassword = !_obscurePassword;
-          });
-        },
-        toggleConfirmPassword: () {
-          setState(() {
-            _obscureConfirmPassword = !_obscureConfirmPassword;
-          });
-        },
-        validatePassword: _validatePassword,
-        validateConfirmPassword: _validateConfirmPassword,
-        onSubmit: _loading ? () {} : _submit,
+    return NeonScaffold(
+      title: 'New Password',
+      subtitle: subtitle ?? 'Secure your account.',
+      showBack: true,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const AuthNeonIntro(
+            icon: Icons.shield_rounded,
+            title: 'Create new password',
+            subtitle: 'Choose a strong password to protect your learner account.',
+          ),
+          const SizedBox(height: AppSpacing.xl),
+          NeonCard(
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  NeonTextField(
+                    controller: _password,
+                    label: 'New password',
+                    prefixIcon: Icons.password_rounded,
+                    obscureText: _obscurePassword,
+                    validator: _validatePassword,
+                    suffixIcon: IconButton(
+                      onPressed: () {
+                        setState(() => _obscurePassword = !_obscurePassword);
+                      },
+                      icon: Icon(
+                        _obscurePassword
+                            ? Icons.visibility_off_rounded
+                            : Icons.visibility_rounded,
+                        color: app.textSecondary,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  NeonTextField(
+                    controller: _confirmPassword,
+                    label: 'Confirm password',
+                    prefixIcon: Icons.verified_user_rounded,
+                    obscureText: _obscureConfirmPassword,
+                    validator: _validateConfirmPassword,
+                    suffixIcon: IconButton(
+                      onPressed: () {
+                        setState(
+                          () => _obscureConfirmPassword =
+                              !_obscureConfirmPassword,
+                        );
+                      },
+                      icon: Icon(
+                        _obscureConfirmPassword
+                            ? Icons.visibility_off_rounded
+                            : Icons.visibility_rounded,
+                        color: app.textSecondary,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                  NeonButton(
+                    label: 'Update Password',
+                    icon: Icons.check_circle_rounded,
+                    loading: _loading,
+                    onPressed: _loading ? null : _submit,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
