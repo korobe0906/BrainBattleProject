@@ -3,6 +3,49 @@ import { AUTH_API_BASE_URL, BATTLE_API_BASE_URL } from './config';
 
 type ApiTarget = 'auth' | 'battle';
 
+export class BrainBattleApiError extends Error {
+  status?: number;
+  data?: unknown;
+
+  constructor(message: string, status?: number, data?: unknown) {
+    super(message);
+    this.name = 'BrainBattleApiError';
+    this.status = status;
+    this.data = data;
+  }
+}
+
+function cleanParams(params?: Record<string, unknown>) {
+  if (!params) return undefined;
+
+  return Object.fromEntries(
+    Object.entries(params).filter(([, value]) => {
+      if (value === undefined || value === null) return false;
+      if (value === '') return false;
+      if (value === 'All') return false;
+      return true;
+    }),
+  );
+}
+
+function normalizeResponse<T>(payload: any): T {
+  if (payload && typeof payload === 'object' && 'data' in payload) {
+    return payload.data as T;
+  }
+  return payload as T;
+}
+
+function buildError(error: AxiosError) {
+  const status = error.response?.status;
+  const data: any = error.response?.data;
+  const message =
+    data?.message instanceof Array
+      ? data.message.join(', ')
+      : data?.message || data?.error || error.message || 'Request failed';
+
+  return new BrainBattleApiError(message, status, data);
+}
+
 class ApiClient {
   private authClient: AxiosInstance;
   private battleClient: AxiosInstance;
@@ -36,19 +79,7 @@ class ApiClient {
 
     client.interceptors.response.use(
       (response) => response,
-      (error: AxiosError) => {
-        if (process.env.NODE_ENV === 'development') {
-          console.error('[BrainBattle API Error]', {
-            baseURL,
-            url: error.config?.url,
-            method: error.config?.method,
-            status: error.response?.status,
-            data: error.response?.data,
-          });
-        }
-
-        return Promise.reject(error);
-      },
+      (error: AxiosError) => Promise.reject(buildError(error)),
     );
 
     return client;
@@ -63,8 +94,10 @@ class ApiClient {
     params?: Record<string, unknown>,
     target: ApiTarget = 'battle',
   ): Promise<T> {
-    const response = await this.getClient(target).get(url, { params });
-    return response.data?.data ?? response.data;
+    const response = await this.getClient(target).get(url, {
+      params: cleanParams(params),
+    });
+    return normalizeResponse<T>(response.data);
   }
 
   async post<T = unknown>(
@@ -73,7 +106,7 @@ class ApiClient {
     target: ApiTarget = 'battle',
   ): Promise<T> {
     const response = await this.getClient(target).post(url, data);
-    return response.data?.data ?? response.data;
+    return normalizeResponse<T>(response.data);
   }
 
   async put<T = unknown>(
@@ -82,7 +115,7 @@ class ApiClient {
     target: ApiTarget = 'battle',
   ): Promise<T> {
     const response = await this.getClient(target).put(url, data);
-    return response.data?.data ?? response.data;
+    return normalizeResponse<T>(response.data);
   }
 
   async patch<T = unknown>(
@@ -91,15 +124,12 @@ class ApiClient {
     target: ApiTarget = 'battle',
   ): Promise<T> {
     const response = await this.getClient(target).patch(url, data);
-    return response.data?.data ?? response.data;
+    return normalizeResponse<T>(response.data);
   }
 
-  async delete<T = unknown>(
-    url: string,
-    target: ApiTarget = 'battle',
-  ): Promise<T> {
+  async delete<T = unknown>(url: string, target: ApiTarget = 'battle'): Promise<T> {
     const response = await this.getClient(target).delete(url);
-    return response.data?.data ?? response.data;
+    return normalizeResponse<T>(response.data);
   }
 }
 
